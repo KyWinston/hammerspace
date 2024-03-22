@@ -17,5 +17,6 @@ impl Plugin for HammerspacePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((EditorPlugin, ViewerPlugin,LoaderPlugin))
         .insert_resource::<LevelFolder>(LevelFolder(self.level_folder.to_string()));
+        .insert_resource::<LevelToLoad>(LevelToLoad("test.gltf"))
     }
 }
