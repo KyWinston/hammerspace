@@ -2,7 +2,7 @@
 name = "hammerspace"
 description = "A plugin for loading and debugging gltf scenes"
 repository = "https://github.com/KyleWinston/hammerspace"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Ky Roberts", "Ky Roberts<kywinston@proton.me>"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
@@ -11,4 +11,4 @@ keywords = ["bevy"]
 [dependencies]
 bevy = "0.13.1"
 bevy_third_person_camera = "0.1.10"
-bevy-basic-ui = "0.3.1"
+bevy-basic-ui = "^0.3"
