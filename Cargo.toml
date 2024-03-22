@@ -1,11 +1,16 @@
 [package]
 name = "hammerspace"
+description = "A small manager for menu states"
+repository = "https://github.com/KyleWinston/hammerspace"
 version = "0.1.0"
+authors = ["Ky Roberts", "Ky Roberts<kywinston@proton.me>"]
 edition = "2021"
+license = "MIT OR Apache-2.0"
+keywords = ["bevy", "menus","ui"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 bevy = "0.13.1"
 bevy_third_person_camera = "0.1.10"
-bevy-ui = { path = "../basic-ui" }
+bevy-basic-ui = "0.3.1"

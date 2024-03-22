@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_ui::AppState;
+use bevy_basic_ui::AppState;
 
 use self::systems::{
     fly_cam, orbit_cam, spawn_cameras, switch_to_editor_view, switch_to_game_view,

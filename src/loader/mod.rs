@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use bevy_ui::AppState;
+use bevy_basic_ui::AppState;
 
 use self::systems::assemble_level;
 

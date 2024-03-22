@@ -4,7 +4,7 @@ use bevy_third_person_camera::{
     camera::{CameraGamepadSettings, Offset, Zoom},
     ThirdPersonCamera,
 };
-use bevy_ui::AppState;
+use bevy_basic_ui::AppState;
 
 use crate::controller::resources::Controller;
 
