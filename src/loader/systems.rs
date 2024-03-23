@@ -51,6 +51,7 @@ pub fn assemble_level(
                 Collider::trimesh(verts, indices),
             ));
         }
+        println!("game start");
         game_state.set(AppState::Game);
     }
 }

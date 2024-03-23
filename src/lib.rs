@@ -1,14 +1,13 @@
 use bevy::prelude::*;
-use editor::EditorPlugin;
 use loader::LoaderPlugin;
 use resources::LevelFolder;
 use viewer::ViewerPlugin;
 
-pub mod controller;
 pub mod editor;
 pub mod loader;
 pub mod resources;
 pub mod viewer;
+pub mod controller;
 pub struct HammerspacePlugin {
     pub level_folder: String,
 }

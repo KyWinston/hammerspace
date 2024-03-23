@@ -155,7 +155,7 @@ pub fn orbit_cam(
                     next_state.set(AppState::Editor)
                 }
                 if **state == AppState::Editor {
-                    next_state.set(AppState::Game)
+                    next_state.set(AppState::Editor)
                 }
             }
            
