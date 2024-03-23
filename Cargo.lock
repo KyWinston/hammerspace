@@ -299,7 +299,7 @@ dependencies = [
 
 [[package]]
 name = "bevy-basic-ui"
-version = "0.3.1"
+version = "0.3.6"
 dependencies = [
  "bevy",
 ]
@@ -2038,7 +2038,7 @@ dependencies = [
 
 [[package]]
 name = "hammerspace"
-version = "0.1.5"
+version = "0.1.6"
 dependencies = [
  "bevy",
  "bevy-basic-ui",
