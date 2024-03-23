@@ -31,6 +31,7 @@ pub fn assemble_level(
     assets_meshes: Res<Assets<GltfMesh>>,
     assets_gltf: Res<Assets<Gltf>>,
     meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
     mut game_state: ResMut<NextState<AppState>>,
 ) {
     if let Some(gltf) = assets_gltf.get(&next_lvl.0) {
@@ -40,7 +41,10 @@ pub fn assemble_level(
             commands.spawn((
                 PbrBundle {
                     mesh: mesh.primitives[0].mesh.clone(),
-                    material: mesh.primitives[0].material.clone().unwrap(),
+                    material: mesh.primitives[0]
+                        .material
+                        .clone()
+                        .unwrap_or_else(|| materials.add(Color::PINK)),
                     ..default()
                 },
                 RigidBody::Fixed,
