@@ -300,6 +300,8 @@ dependencies = [
 [[package]]
 name = "bevy-basic-ui"
 version = "0.3.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "20aaf128ee81ac725790375a35cb78ef83d42ac55fe3e26338b7849ae745eee6"
 dependencies = [
  "bevy",
  "bevy-ui-dsl",
@@ -2053,7 +2055,7 @@ dependencies = [
 
 [[package]]
 name = "hammerspace"
-version = "0.1.9"
+version = "0.1.10"
 dependencies = [
  "bevy",
  "bevy-basic-ui",
