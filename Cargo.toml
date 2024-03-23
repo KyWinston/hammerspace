@@ -2,7 +2,7 @@
 name = "hammerspace"
 description = "A plugin for loading and debugging gltf scenes"
 repository = "https://github.com/KyleWinston/hammerspace"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Ky Roberts", "Ky Roberts<kywinston@proton.me>"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
