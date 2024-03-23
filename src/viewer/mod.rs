@@ -23,7 +23,7 @@ impl Plugin for ViewerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, spawn_cameras)
             .add_systems(OnEnter(AppState::Editor), switch_to_editor_view)
-            .add_systems(OnExit(AppState::Editor), switch_to_game_view)
+            .add_systems(OnEnter(AppState::Game), switch_to_game_view)
             .add_systems(Update, (fly_cam, orbit_cam));
     }
 }

@@ -150,16 +150,15 @@ pub fn orbit_cam(
                 }
                 transform.look_at(pan_orbit.focus, Vec3::Y);
             }
-            if keys.any_pressed([KeyCode::Tab]) {
+            if keys.just_released(KeyCode::Tab) {
                 if **state == AppState::Game {
                     next_state.set(AppState::Editor)
                 }
-            }
-            if keys.any_pressed([KeyCode::ShiftLeft]) {
                 if **state == AppState::Editor {
                     next_state.set(AppState::Game)
                 }
             }
+           
         }
     }
 }

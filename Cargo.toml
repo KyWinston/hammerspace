@@ -11,4 +11,6 @@ keywords = ["bevy"]
 [dependencies]
 bevy = "0.13.1"
 bevy_third_person_camera = "0.1.10"
-bevy-basic-ui = "^0.3"
+# bevy-basic-ui = "^0.3"
+bevy-basic-ui = { path = "../basic-ui" }
+bevy_rapier3d = "0.25.0"
