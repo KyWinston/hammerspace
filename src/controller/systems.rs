@@ -1,13 +1,20 @@
-use bevy::{input::gamepad::{ButtonSettings, GamepadConnection, GamepadEvent, GamepadSettings}, prelude::*};
+use bevy::{
+    input::gamepad::{ButtonSettings, GamepadConnection, GamepadEvent, GamepadSettings},
+    prelude::*,
+};
 
 use super::resources::Controller;
 
-pub fn configure_gamepad(my_gamepad: Option<Res<Controller>>, mut settings: ResMut<GamepadSettings>) {
+pub fn configure_gamepad(
+    my_gamepad: Option<Res<Controller>>,
+    mut settings: ResMut<GamepadSettings>,
+) {
     let _gamepad = if let Some(gp) = my_gamepad {
         // a gamepad is connected, we have the id
         gp.0
     } else {
         // no gamepad is connected
+        println!("gamepad not found");
         return;
     };
 

@@ -1,5 +1,6 @@
 use bevy::prelude::*;
-use bevy_basic_ui::AppState;
+
+use crate::HammerState;
 
 use self::{
     events::LoadLevelEvent,
@@ -14,8 +15,12 @@ pub struct LoaderPlugin;
 
 impl Plugin for LoaderPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<LoadLevelEvent>()
-            .add_systems(Update, fetch_level_handle)
-            .add_systems(OnEnter(AppState::Loading), assemble_level);
+        app.add_event::<LoadLevelEvent>().add_systems(
+            Update,
+            (
+                fetch_level_handle,
+                assemble_level.run_if(in_state(HammerState::Loading)),
+            ),
+        );
     }
 }

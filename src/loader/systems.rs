@@ -1,58 +1,121 @@
 use bevy::{
-    gltf::{Gltf, GltfMesh},
+    asset::LoadState,
+    gltf::{Gltf, GltfMesh, GltfNode},
     prelude::*,
     render::mesh::Indices,
 };
-use bevy_basic_ui::AppState;
-use bevy_rapier3d::{dynamics::RigidBody, geometry::Collider};
+use bevy_rapier3d::dynamics::RigidBody;
 
-use crate::resources::LevelFolder;
+use crate::{resources::LevelFolder, HammerState};
 
-use super::{events::LoadLevelEvent, resources::NextLevel};
+use super::{components::PrefabBundle, events::LoadLevelEvent, resources::NextLevel};
 
 pub fn fetch_level_handle(
     lvl_folder: Res<LevelFolder>,
     mut lvl_ev: EventReader<LoadLevelEvent>,
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut state: ResMut<NextState<AppState>>,
+    mut state: ResMut<NextState<HammerState>>,
 ) {
     for ev in lvl_ev.read() {
         let path = lvl_folder.0.to_string() + "/" + &ev.0;
         let gltf_scene: Handle<Gltf> = asset_server.load(&path);
-        commands.insert_resource(NextLevel(gltf_scene));
-        state.set(AppState::Loading);
+        match &ev.1 {
+            Some(item) => {
+                commands.insert_resource(NextLevel(gltf_scene, Some(item.to_string())));
+                println!("alkyd detected: switching");
+            }
+            None => {
+                commands.insert_resource(NextLevel(gltf_scene, None));
+            }
+        }
+        state.set(HammerState::Loading);
     }
 }
 
 pub fn assemble_level(
     mut commands: Commands,
     next_lvl: Res<NextLevel>,
+    assets_nodes: Res<Assets<GltfNode>>,
     assets_meshes: Res<Assets<GltfMesh>>,
     assets_gltf: Res<Assets<Gltf>>,
     meshes: ResMut<Assets<Mesh>>,
+    asset_server: Res<AssetServer>,
+    mut game_state: ResMut<NextState<HammerState>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
-    mut game_state: ResMut<NextState<AppState>>,
 ) {
     if let Some(gltf) = assets_gltf.get(&next_lvl.0) {
-        for mesh_id in &gltf.named_meshes {
-            let mesh = assets_meshes.get(&gltf.named_meshes[mesh_id.0]).unwrap();
-            let (verts, indices) = get_collision_data(mesh_id.1, &assets_meshes, &meshes);
-            commands.spawn((
-                PbrBundle {
+        if next_lvl.1.is_some() {
+            for node_id in &gltf.named_nodes {
+                if !node_id.0.contains(next_lvl.1.as_ref().unwrap()) {
+                    continue;
+                }
+                let mesh_id = assets_nodes.get(node_id.1).unwrap();
+
+                let mesh = assets_meshes
+                    .get(mesh_id.mesh.as_ref().unwrap().id())
+                    .unwrap();
+
+                commands.spawn(PbrBundle {
                     mesh: mesh.primitives[0].mesh.clone(),
-                    material: mesh.primitives[0]
-                        .material
-                        .clone()
-                        .unwrap_or_else(|| materials.add(Color::PINK)),
+                    material: materials.add(StandardMaterial {
+                        base_color_texture: placehold_texture(
+                            &next_lvl.1.as_ref().unwrap(),
+                            "diffuse",
+                            &asset_server,
+                        ),
+                        // normal_map_texture: placehold_texture(
+                        //     &next_lvl.1.as_ref().unwrap(),
+                        //     "normal",
+                        //     &asset_server,
+                        // ),
+                        // flip_normal_map_y: true,
+                        // occlusion_texture: Some(textures.2),
+                        ..default()
+                    }),
                     ..default()
-                },
-                RigidBody::Fixed,
-                Collider::trimesh(verts, indices),
-            ));
+                });
+                let mesh_id = assets_nodes.get(node_id.1).unwrap();
+                if mesh_id.mesh.is_none() {
+                    continue;
+                }
+                game_state.set(HammerState::Showcase);
+            }
+        } else {
+            for node_id in &gltf.named_nodes {
+                if node_id.0.contains("_collider") || node_id.0.contains("_ref") {
+                    continue;
+                }
+                let mesh_id = assets_nodes.get(node_id.1).unwrap();
+                if mesh_id.mesh.is_none() {
+                    continue;
+                }
+                let mesh = assets_meshes
+                    .get(mesh_id.mesh.as_ref().unwrap().id())
+                    .unwrap();
+                let (verts, indices) =
+                    get_collision_data(node_id.0, &gltf, &assets_nodes, &assets_meshes, &meshes);
+
+                commands.spawn((PrefabBundle::new(
+                    RigidBody::Fixed,
+                    mesh.primitives[0].mesh.clone(),
+                    verts,
+                    indices,
+                    materials.add(StandardMaterial {
+                        base_color_texture: Some(asset_server.load(
+                            "textures/".to_string()
+                                + &next_lvl.1.as_ref().unwrap()
+                                + "_diffuse.png",
+                        )),
+                        // normal_map_texture: Some(textures.4),
+                        // flip_normal_map_y: true,
+                        // occlusion_texture: Some(textures.2),
+                        ..default()
+                    }),
+                ),));
+            }
+            game_state.set(HammerState::Game);
         }
-        println!("game start");
-        game_state.set(AppState::Game);
     }
 }
 
@@ -83,24 +146,40 @@ fn build_colliders(prim_mesh: Mesh) -> (Vec<Vec3>, Vec<[u32; 3]>) {
 }
 
 pub fn get_collision_data(
-    mesh_handle: &Handle<GltfMesh>,
-    gltf_meshes: &Res<Assets<GltfMesh>>,
-    asset_mesh: &ResMut<Assets<Mesh>>,
+    base_mesh: &String,
+    gltf: &Gltf,
+    asset_nodes: &Res<Assets<GltfNode>>,
+    asset_meshes: &Res<Assets<GltfMesh>>,
+    meshes: &ResMut<Assets<Mesh>>,
 ) -> (Vec<Vec3>, Vec<[u32; 3]>) {
-    let prim_mesh = asset_mesh
-        .get(&gltf_meshes.get(mesh_handle).unwrap().primitives[0].mesh)
+    let collider_node = &gltf.named_nodes[&(base_mesh.to_owned() + "_collider")];
+    let coll_mesh = asset_nodes
+        .get(collider_node.id())
+        .unwrap()
+        .mesh
+        .as_ref()
+        .unwrap();
+    let prim_mesh = meshes
+        .get(
+            asset_meshes.get(coll_mesh).unwrap().primitives[0]
+                .mesh
+                .clone(),
+        )
         .unwrap()
         .to_owned();
     build_colliders(prim_mesh)
 }
 
-pub fn assemble_textures(
+fn placehold_texture(
     prefab_name: &str,
+    texture_type: &str,
     asset_server: &Res<AssetServer>,
-) -> (Handle<Image>, Handle<Image>, Handle<Image>, Handle<Image>) {
-    let tex = asset_server.load("textures/".to_string() + prefab_name + "_diffuse.png");
-    let metallic_tex = asset_server.load("textures/".to_string() + prefab_name + "_metallic.png");
-    let ao_tex = asset_server.load("textures/".to_string() + prefab_name + "_ao.png");
-    let emissive_tex = asset_server.load("textures/".to_string() + prefab_name + "_emissive.png");
-    (tex, metallic_tex, ao_tex, emissive_tex)
+) -> Option<Handle<Image>> {
+
+    let tex =
+        asset_server.load("textures/".to_string() + prefab_name + "_" + texture_type + ".png");
+    match asset_server.load_state(tex.id()) {
+        LoadState::Failed => None,
+        _ => Some(tex),
+    }
 }

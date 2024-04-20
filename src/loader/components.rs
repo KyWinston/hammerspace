@@ -2,13 +2,14 @@ use bevy::prelude::*;
 use bevy_rapier3d::{dynamics::RigidBody, geometry::Collider};
 
 #[derive(Component)]
-pub struct IsSetpiece;
+pub struct Setpiece;
 
 #[derive(Bundle)]
 pub struct PrefabBundle {
     rendered_mesh: PbrBundle,
     collider: Collider,
     rigid_body_type: RigidBody,
+    setpiece: Setpiece,
 }
 
 impl PrefabBundle {
@@ -27,6 +28,7 @@ impl PrefabBundle {
             },
             collider: Collider::trimesh(verts, indices),
             rigid_body_type,
+            setpiece: Setpiece,
         }
     }
 }

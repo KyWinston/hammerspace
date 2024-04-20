@@ -4,17 +4,17 @@ use bevy_third_person_camera::{
     camera::{CameraGamepadSettings, Offset, Zoom},
     ThirdPersonCamera,
 };
-use bevy_basic_ui::AppState;
 
-use crate::controller::resources::Controller;
+use crate::{controller::resources::Controller, HammerState};
 
-use super::{components::PanOrbitCamera, PANNING_KEYS};
+use super::{components::{PanOrbitCamera, Setpiece}, PANNING_KEYS};
 
 pub fn spawn_cameras(mut commands: Commands) {
     let gamepad = Gamepad::new(0);
     commands.insert_resource(Controller(gamepad));
     commands.spawn((
         ThirdPersonCamera {
+            cursor_lock_active:false,
             aim_enabled: true,
             aim_speed: 3.0,
             offset_enabled: true,
@@ -122,10 +122,15 @@ pub fn fly_cam(
 pub fn orbit_cam(
     mut edit_cam: Query<(&mut Transform, &mut PanOrbitCamera)>,
     keys: Res<ButtonInput<KeyCode>>,
-    state: Res<State<AppState>>,
-    mut next_state: ResMut<NextState<AppState>>,
+    alkyd_setpiece: Query<&Transform, (With<Setpiece>, Without<PanOrbitCamera>)>,
+    state: Res<State<HammerState>>,
 ) {
     if let Ok((mut transform, mut pan_orbit)) = edit_cam.get_single_mut() {
+        if *state == HammerState::Showcase {
+            if let Ok(set_transform) = alkyd_setpiece.get_single() {
+                transform.look_at(set_transform.translation, Vec3::Y);
+            }
+        }
         if !pan_orbit.panning {
             if keys.any_pressed([KeyCode::ArrowLeft, KeyCode::ArrowRight]) {
                 if keys.pressed(KeyCode::ArrowLeft) {
@@ -148,17 +153,10 @@ pub fn orbit_cam(
                 if keys.pressed(KeyCode::ArrowDown) {
                     transform.translation.y -= 1.0;
                 }
-                transform.look_at(pan_orbit.focus, Vec3::Y);
-            }
-            if keys.just_released(KeyCode::Tab) {
-                if **state == AppState::Game {
-                    next_state.set(AppState::Editor)
-                }
-                if **state == AppState::Editor {
-                    next_state.set(AppState::Editor)
+                if *state != HammerState::Showcase {
+                    transform.look_at(pan_orbit.focus, Vec3::Y);
                 }
             }
-           
         }
     }
 }

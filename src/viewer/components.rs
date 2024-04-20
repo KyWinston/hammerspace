@@ -1,6 +1,10 @@
 use bevy::prelude::*;
 
 #[derive(Component)]
+pub struct Setpiece;
+
+
+#[derive(Component)]
 pub struct PanOrbitCamera {
     pub orbit: f32,
     pub focus: Vec3,
