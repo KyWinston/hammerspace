@@ -2770,9 +2770,10 @@ dependencies = [
 
 [[package]]
 name = "hammerspace"
-version = "0.1.12"
+version = "0.1.13"
 dependencies = [
  "anyhow",
+ "async-compat",
  "bevy",
  "bevy-inspector-egui",
  "bevy_rapier3d",

@@ -6,6 +6,7 @@ use bevy::{
 
 #[cfg(feature = "handle-physics")]
 use bevy::render::mesh::Indices;
+
 #[cfg(feature = "handle-physics")]
 use bevy_rapier3d::dynamics::RigidBody;
 
@@ -41,7 +42,7 @@ pub fn assemble_level(
     assets_nodes: Res<Assets<GltfNode>>,
     assets_meshes: Res<Assets<GltfMesh>>,
     assets_gltf: Res<Assets<Gltf>>,
-    // meshes: ResMut<Assets<Mesh>>,
+    meshes: ResMut<Assets<Mesh>>,
     asset_server: Res<AssetServer>,
     mut game_state: ResMut<NextState<HammerState>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
