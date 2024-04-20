@@ -44,7 +44,7 @@ pub fn spawn_cameras(mut commands: Commands) {
 
 pub fn switch_to_editor_view(
     mut edit_cam: Query<&mut Camera, With<PanOrbitCamera>>,
-    mut game_cam: Query<&mut Camera, WithOut<PanOrbitCamera>>,
+    mut game_cam: Query<&mut Camera, Without<PanOrbitCamera>>,
 ) {
     if let Ok(mut edit_cam) = edit_cam.get_single_mut() {
         edit_cam.is_active = true;
@@ -56,7 +56,7 @@ pub fn switch_to_editor_view(
 
 pub fn switch_to_game_view(
     mut edit_cam: Query<&mut Camera, With<PanOrbitCamera>>,
-    mut game_cam: Query<&mut Camera, WithOut<PanOrbitCamera>>,
+    mut game_cam: Query<&mut Camera, Without<PanOrbitCamera>>,
 ) {
     if let Ok(mut edit_cam) = edit_cam.get_single_mut() {
         edit_cam.is_active = false;
