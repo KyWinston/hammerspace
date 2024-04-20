@@ -2,8 +2,11 @@ use bevy::{
     asset::LoadState,
     gltf::{Gltf, GltfMesh, GltfNode},
     prelude::*,
-    render::mesh::Indices,
 };
+
+#[cfg(feature = "handle-physics")]
+use bevy::render::mesh::Indices;
+#[cfg(feature = "handle-physics")]
 use bevy_rapier3d::dynamics::RigidBody;
 
 use crate::{resources::LevelFolder, HammerState};
@@ -23,7 +26,6 @@ pub fn fetch_level_handle(
         match &ev.1 {
             Some(item) => {
                 commands.insert_resource(NextLevel(gltf_scene, Some(item.to_string())));
-                println!("alkyd detected: switching");
             }
             None => {
                 commands.insert_resource(NextLevel(gltf_scene, None));
@@ -39,7 +41,7 @@ pub fn assemble_level(
     assets_nodes: Res<Assets<GltfNode>>,
     assets_meshes: Res<Assets<GltfMesh>>,
     assets_gltf: Res<Assets<Gltf>>,
-    meshes: ResMut<Assets<Mesh>>,
+    // meshes: ResMut<Assets<Mesh>>,
     asset_server: Res<AssetServer>,
     mut game_state: ResMut<NextState<HammerState>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
@@ -93,13 +95,16 @@ pub fn assemble_level(
                 let mesh = assets_meshes
                     .get(mesh_id.mesh.as_ref().unwrap().id())
                     .unwrap();
+                #[cfg(feature = "handle-physics")]
                 let (verts, indices) =
                     get_collision_data(node_id.0, &gltf, &assets_nodes, &assets_meshes, &meshes);
-
-                commands.spawn((PrefabBundle::new(
+                commands.spawn(PrefabBundle::new(
+                    #[cfg(feature = "handle-physics")]
                     RigidBody::Fixed,
                     mesh.primitives[0].mesh.clone(),
+                    #[cfg(feature = "handle-physics")]
                     verts,
+                    #[cfg(feature = "handle-physics")]
                     indices,
                     materials.add(StandardMaterial {
                         base_color_texture: Some(asset_server.load(
@@ -112,13 +117,13 @@ pub fn assemble_level(
                         // occlusion_texture: Some(textures.2),
                         ..default()
                     }),
-                ),));
+                ));
             }
             game_state.set(HammerState::Game);
         }
     }
 }
-
+#[cfg(feature = "handle-physics")]
 fn build_colliders(prim_mesh: Mesh) -> (Vec<Vec3>, Vec<[u32; 3]>) {
     let (vert_buffer, idx_buffer) = (prim_mesh.attributes(), prim_mesh.indices().unwrap());
     let mut vertices: Vec<Vec3> = vec![];
@@ -145,6 +150,7 @@ fn build_colliders(prim_mesh: Mesh) -> (Vec<Vec3>, Vec<[u32; 3]>) {
     (vertices, indices)
 }
 
+#[cfg(feature = "handle-physics")]
 pub fn get_collision_data(
     base_mesh: &String,
     gltf: &Gltf,
@@ -175,7 +181,6 @@ fn placehold_texture(
     texture_type: &str,
     asset_server: &Res<AssetServer>,
 ) -> Option<Handle<Image>> {
-
     let tex =
         asset_server.load("textures/".to_string() + prefab_name + "_" + texture_type + ".png");
     match asset_server.load_state(tex.id()) {

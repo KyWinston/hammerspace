@@ -18,14 +18,23 @@ use bevy::asset::ron;
 use bevy::log::{Level, LogPlugin};
 use bevy::prelude::*;
 use bevy::DefaultPlugins;
+
+#[cfg(feature = "debug")]
 use bevy_inspector_egui::quick::WorldInspectorPlugin;
+#[cfg(feature = "debug")]
 use clap::{Parser, ValueEnum};
+#[cfg(feature = "multiplayer")]
 use lightyear::prelude::client::{InterpolationConfig, InterpolationDelay, NetConfig};
+#[cfg(feature = "multiplayer")]
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "multiplayer")]
 use lightyear::prelude::TransportConfig;
+#[cfg(feature = "multiplayer")]
 use lightyear::shared::config::Mode;
+#[cfg(feature = "multiplayer")]
 use lightyear::shared::log::add_log_layer;
+#[cfg(feature = "multiplayer")]
 use lightyear::transport::LOCAL_SOCKET;
 
 use crate::comms::protocol::protocol;
@@ -152,7 +161,6 @@ fn run(settings: Settings, cli: Cli) {
         }
     }
 }
-
 /// Build the client app
 fn client_app(settings: Settings, net_config: client::NetConfig) -> App {
     let mut app = App::new();
@@ -219,12 +227,9 @@ fn server_app(settings: Settings, extra_transport_configs: Vec<TransportConfig>)
 }
 
 pub struct CommsPlugin;
-
 #[cfg(not(target_family = "wasm"))]
-impl Plugin for CommsPlugin{
-fn build(&self, app: &mut App) {
-
-}
+impl Plugin for CommsPlugin {
+    fn build(&self, app: &mut App) {}
 }
 /// An app that contains both the client and server plugins
 fn combined_app(
