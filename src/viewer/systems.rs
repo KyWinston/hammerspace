@@ -1,9 +1,5 @@
 use bevy::prelude::*;
 
-use bevy_third_person_camera::{
-    camera::{CameraGamepadSettings, Offset, Zoom},
-};
-
 use crate::{controller::resources::Controller, HammerState};
 
 use super::{
