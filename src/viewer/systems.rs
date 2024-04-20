@@ -2,43 +2,25 @@ use bevy::prelude::*;
 
 use bevy_third_person_camera::{
     camera::{CameraGamepadSettings, Offset, Zoom},
-    ThirdPersonCamera,
 };
 
 use crate::{controller::resources::Controller, HammerState};
 
-use super::{components::{PanOrbitCamera, Setpiece}, PANNING_KEYS};
+use super::{
+    components::{PanOrbitCamera, Setpiece},
+    PANNING_KEYS,
+};
 
 pub fn spawn_cameras(mut commands: Commands) {
     let gamepad = Gamepad::new(0);
     commands.insert_resource(Controller(gamepad));
-    commands.spawn((
-        ThirdPersonCamera {
-            cursor_lock_active:false,
-            aim_enabled: true,
-            aim_speed: 3.0,
-            offset_enabled: true,
-            offset: Offset::new(1., 1.),
-            aim_zoom: 0.7,
-            gamepad_settings: CameraGamepadSettings {
-                aim_button: GamepadButton {
-                    gamepad,
-                    button_type: GamepadButtonType::LeftTrigger,
-                },
-                ..default()
-            },
-            zoom_enabled: true,
-            zoom: Zoom::new(5.5, 15.0),
+    commands.spawn((Camera3dBundle {
+        camera: Camera {
+            is_active: false,
             ..default()
         },
-        Camera3dBundle {
-            camera: Camera {
-                is_active: false,
-                ..default()
-            },
-            ..default()
-        },
-    ));
+        ..default()
+    },));
 
     let radius = 20.0;
     let orbit: f32 = 0.0;
@@ -61,8 +43,8 @@ pub fn spawn_cameras(mut commands: Commands) {
 }
 
 pub fn switch_to_editor_view(
-    mut edit_cam: Query<&mut Camera, (With<PanOrbitCamera>, Without<ThirdPersonCamera>)>,
-    mut game_cam: Query<&mut Camera, With<ThirdPersonCamera>>,
+    mut edit_cam: Query<&mut Camera, With<PanOrbitCamera>>,
+    mut game_cam: Query<&mut Camera, WithOut<PanOrbitCamera>>,
 ) {
     if let Ok(mut edit_cam) = edit_cam.get_single_mut() {
         edit_cam.is_active = true;
@@ -73,8 +55,8 @@ pub fn switch_to_editor_view(
 }
 
 pub fn switch_to_game_view(
-    mut edit_cam: Query<&mut Camera, (With<PanOrbitCamera>, Without<ThirdPersonCamera>)>,
-    mut game_cam: Query<&mut Camera, With<ThirdPersonCamera>>,
+    mut edit_cam: Query<&mut Camera, With<PanOrbitCamera>>,
+    mut game_cam: Query<&mut Camera, WithOut<PanOrbitCamera>>,
 ) {
     if let Ok(mut edit_cam) = edit_cam.get_single_mut() {
         edit_cam.is_active = false;
