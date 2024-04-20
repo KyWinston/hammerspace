@@ -8,7 +8,7 @@ use self::systems::{
 
 pub struct ViewerPlugin;
 
-mod components;
+pub mod components;
 pub mod resources;
 mod systems;
 
