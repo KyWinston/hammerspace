@@ -13,6 +13,7 @@ resolver = "2"
 metrics = ["lightyear/metrics", "dep:metrics-exporter-prometheus"]
 mock_time = ["lightyear/mock_time"]
 handle-physics = ["bevy_rapier3d"]
+level-loader = []
 multiplayer = [
     "lightyear",
     "serde",

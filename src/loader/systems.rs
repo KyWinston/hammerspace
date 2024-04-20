@@ -12,8 +12,12 @@ use bevy_rapier3d::dynamics::RigidBody;
 
 use crate::{resources::LevelFolder, HammerState};
 
-use super::{components::PrefabBundle, events::LoadLevelEvent, resources::NextLevel};
+use super::{components::PrefabBundle, events::LoadLevelEvent};
 
+#[cfg(feature = "level-loader")]
+use super::resources::NextLevel;
+
+#[cfg(feature = "level-loader")]
 pub fn fetch_level_handle(
     lvl_folder: Res<LevelFolder>,
     mut lvl_ev: EventReader<LoadLevelEvent>,
@@ -35,7 +39,7 @@ pub fn fetch_level_handle(
         state.set(HammerState::Loading);
     }
 }
-
+#[cfg(feature = "level-loader")]
 pub fn assemble_level(
     mut commands: Commands,
     next_lvl: Res<NextLevel>,
@@ -177,6 +181,7 @@ pub fn get_collision_data(
     build_colliders(prim_mesh)
 }
 
+#[cfg(feature = "level-loader")]
 fn placehold_texture(
     prefab_name: &str,
     texture_type: &str,
