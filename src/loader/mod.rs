@@ -1,5 +1,8 @@
 use bevy::prelude::*;
 
+#[cfg(feature = "level-loader")]
+use crate::HammerState;
+
 use self::events::LoadLevelEvent;
 
 #[cfg(feature = "level-loader")]
