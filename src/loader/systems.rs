@@ -114,7 +114,7 @@ pub fn assemble_level(
                     materials.add(StandardMaterial {
                         base_color_texture: Some(asset_server.load(
                             "textures/".to_string()
-                                + &next_lvl.1.as_ref().unwrap()
+                                + &node_id.1.as_ref().unwrap()
                                 + "_diffuse.png",
                         )),
                         // normal_map_texture: Some(textures.4),
