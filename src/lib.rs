@@ -21,16 +21,15 @@ pub struct HammerspacePlugin {
 
 impl Plugin for HammerspacePlugin {
     fn build(&self, app: &mut App) {
-        app.init_state::<HammerState>()
-            .add_plugins((
-                ViewerPlugin,
-                #[cfg(feature = "level-loader")]
-                LoaderPlugin,
-                #[cfg(feature = "multiplayer")]
-                CommsPlugin,
-            ));
+        app.init_state::<HammerState>().add_plugins((
+            ViewerPlugin,
             #[cfg(feature = "level-loader")]
-            app.insert_resource::<LevelFolder>(LevelFolder(self.level_folder.to_string()));
+            LoaderPlugin,
+            #[cfg(feature = "multiplayer")]
+            CommsPlugin,
+        ));
+        #[cfg(feature = "level-loader")]
+        app.insert_resource::<LevelFolder>(LevelFolder(self.level_folder.to_string()));
     }
 }
 
@@ -41,5 +40,4 @@ pub enum HammerState {
     Loading,
     Editor,
     Game,
-    Showcase,
 }

@@ -1,5 +1,5 @@
 use bevy::{
-    asset::LoadState,
+    // asset::LoadState,
     gltf::{Gltf, GltfMesh, GltfNode},
     prelude::*,
 };
@@ -28,14 +28,9 @@ pub fn fetch_level_handle(
     for ev in lvl_ev.read() {
         let path = lvl_folder.0.to_string() + "/" + &ev.0;
         let gltf_scene: Handle<Gltf> = asset_server.load(&path);
-        match &ev.1 {
-            Some(item) => {
-                commands.insert_resource(NextLevel(gltf_scene, Some(item.to_string())));
-            }
-            None => {
-                commands.insert_resource(NextLevel(gltf_scene, None));
-            }
-        }
+
+        commands.insert_resource(NextLevel(gltf_scene));
+
         state.set(HammerState::Loading);
     }
 }
@@ -52,82 +47,43 @@ pub fn assemble_level(
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     if let Some(gltf) = assets_gltf.get(&next_lvl.0) {
-        if next_lvl.1.is_some() {
-            for node_id in &gltf.named_nodes {
-                if !node_id.0.contains(next_lvl.1.as_ref().unwrap()) {
-                    continue;
-                }
-                let mesh_id = assets_nodes.get(node_id.1).unwrap();
-
-                let mesh = assets_meshes
-                    .get(mesh_id.mesh.as_ref().unwrap().id())
-                    .unwrap();
-
-                commands.spawn(PbrBundle {
-                    mesh: mesh.primitives[0].mesh.clone(),
-                    material: materials.add(StandardMaterial {
-                        base_color_texture: placehold_texture(
-                            &next_lvl.1.as_ref().unwrap(),
-                            "diffuse",
-                            &asset_server,
-                        ),
-                        // normal_map_texture: placehold_texture(
-                        //     &next_lvl.1.as_ref().unwrap(),
-                        //     "normal",
-                        //     &asset_server,
-                        // ),
-                        // flip_normal_map_y: true,
-                        // occlusion_texture: Some(textures.2),
-                        ..default()
-                    }),
-                    ..default()
-                });
-                let mesh_id = assets_nodes.get(node_id.1).unwrap();
-                if mesh_id.mesh.is_none() {
-                    continue;
-                }
-                game_state.set(HammerState::Showcase);
+        for node_id in &gltf.named_nodes {
+            if node_id.0.contains("_collider") || node_id.0.contains("_ref") {
+                continue;
             }
-        } else {
-            for node_id in &gltf.named_nodes {
-                if node_id.0.contains("_collider") || node_id.0.contains("_ref") {
-                    continue;
-                }
-                let mesh_id = assets_nodes.get(node_id.1).unwrap();
-                if mesh_id.mesh.is_none() {
-                    continue;
-                }
-                let mesh = assets_meshes
-                    .get(mesh_id.mesh.as_ref().unwrap().id())
-                    .unwrap();
+            let mesh_id = assets_nodes.get(node_id.1).unwrap();
+            if mesh_id.mesh.is_none() {
+                continue;
+            }
+            let mesh = assets_meshes
+                .get(mesh_id.mesh.as_ref().unwrap().id())
+                .unwrap();
+            #[cfg(feature = "handle-physics")]
+            let (verts, indices) =
+                get_collision_data(node_id.0, &gltf, &assets_nodes, &assets_meshes, &meshes);
+            commands.spawn(PrefabBundle::new(
                 #[cfg(feature = "handle-physics")]
-                let (verts, indices) =
-                    get_collision_data(node_id.0, &gltf, &assets_nodes, &assets_meshes, &meshes);
-                commands.spawn(PrefabBundle::new(
-                    #[cfg(feature = "handle-physics")]
-                    RigidBody::Fixed,
-                    mesh.primitives[0].mesh.clone(),
-                    #[cfg(feature = "handle-physics")]
-                    verts,
-                    #[cfg(feature = "handle-physics")]
-                    indices,
-                    materials.add(StandardMaterial {
-                        base_color_texture: Some(asset_server.load(
-                            "textures/".to_string()
-                                + &node_id.0
-                                + "_diffuse.png",
-                        )),
-                        // normal_map_texture: Some(textures.4),
-                        // flip_normal_map_y: true,
-                        // occlusion_texture: Some(textures.2),
-                        ..default()
-                    }),
-                ));
-            }
-            game_state.set(HammerState::Game);
+                RigidBody::Fixed,
+                mesh.primitives[0].mesh.clone(),
+                #[cfg(feature = "handle-physics")]
+                verts,
+                #[cfg(feature = "handle-physics")]
+                indices,
+                materials.add(StandardMaterial {
+                    base_color_texture: Some(
+                        asset_server.load("textures/".to_string() + &node_id.0 + "_diffuse.png"),
+                    ),
+                    // normal_map_texture: Some(textures.4),
+                    // flip_normal_map_y: true,
+                    // occlusion_texture: Some(textures.2),
+                    ..default()
+                }),
+            ));
         }
+        game_state.set(HammerState::Game);
     }
 }
+
 #[cfg(feature = "handle-physics")]
 fn build_colliders(prim_mesh: Mesh) -> (Vec<Vec3>, Vec<[u32; 3]>) {
     let (vert_buffer, idx_buffer) = (prim_mesh.attributes(), prim_mesh.indices().unwrap());
@@ -181,16 +137,16 @@ pub fn get_collision_data(
     build_colliders(prim_mesh)
 }
 
-#[cfg(feature = "level-loader")]
-fn placehold_texture(
-    prefab_name: &str,
-    texture_type: &str,
-    asset_server: &Res<AssetServer>,
-) -> Option<Handle<Image>> {
-    let tex =
-        asset_server.load("textures/".to_string() + prefab_name + "_" + texture_type + ".png");
-    match asset_server.load_state(tex.id()) {
-        LoadState::Failed => None,
-        _ => Some(tex),
-    }
-}
+// #[cfg(feature = "level-loader")]
+// fn placehold_texture(
+//     prefab_name: &str,
+//     texture_type: &str,
+//     asset_server: &Res<AssetServer>,
+// ) -> Option<Handle<Image>> {
+//     let tex =
+//         asset_server.load("textures/".to_string() + prefab_name + "_" + texture_type + ".png");
+//     match asset_server.load_state(tex.id()) {
+//         LoadState::Failed => None,
+//         _ => Some(tex),
+//     }
+// }

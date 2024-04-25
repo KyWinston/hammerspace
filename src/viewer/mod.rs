@@ -25,7 +25,6 @@ impl Plugin for ViewerPlugin {
     fn build(&self, app: &mut App) {
         app.add_systems(Startup, spawn_cameras)
             .add_systems(OnEnter(HammerState::Editor), switch_to_editor_view)
-            .add_systems(OnEnter(HammerState::Showcase), switch_to_editor_view)
             .add_systems(OnEnter(HammerState::Game), switch_to_game_view)
             .add_systems(
                 Update,
