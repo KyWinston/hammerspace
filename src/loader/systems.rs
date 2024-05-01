@@ -37,7 +37,7 @@ pub fn fetch_level_handle(
         state.set(HammerState::Loading);
     }
 }
-// #[cfg(feature = "level-loader")]
+#[cfg(feature = "level-loader")]
 pub fn assemble_level(
     mut commands: Commands,
     next_lvl: Res<NextLevel>,

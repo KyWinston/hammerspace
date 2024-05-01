@@ -2726,7 +2726,7 @@ dependencies = [
 
 [[package]]
 name = "hammerspace"
-version = "0.1.22"
+version = "0.1.23"
 dependencies = [
  "anyhow",
  "async-compat",
