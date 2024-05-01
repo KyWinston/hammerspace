@@ -4,6 +4,9 @@ use bevy::prelude::*;
 use bevy_rapier3d::{dynamics::RigidBody, geometry::Collider};
 
 #[derive(Component)]
+pub struct MaterialPending;
+
+#[derive(Component)]
 pub struct Setpiece;
 
 #[derive(Bundle)]

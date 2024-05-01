@@ -12,7 +12,10 @@ use bevy_rapier3d::dynamics::RigidBody;
 
 use crate::{resources::LevelFolder, HammerState};
 
-use super::{components::PrefabBundle, events::LoadLevelEvent};
+use super::{
+    components::{MaterialPending, PrefabBundle},
+    events::LoadLevelEvent,
+};
 
 #[cfg(feature = "level-loader")]
 use super::resources::NextLevel;
@@ -34,7 +37,7 @@ pub fn fetch_level_handle(
         state.set(HammerState::Loading);
     }
 }
-#[cfg(feature = "level-loader")]
+// #[cfg(feature = "level-loader")]
 pub fn assemble_level(
     mut commands: Commands,
     next_lvl: Res<NextLevel>,
@@ -61,23 +64,21 @@ pub fn assemble_level(
             #[cfg(feature = "handle-physics")]
             let (verts, indices) =
                 get_collision_data(node_id.0, &gltf, &assets_nodes, &assets_meshes, &meshes);
-            commands.spawn(PrefabBundle::new(
-                #[cfg(feature = "handle-physics")]
-                RigidBody::Fixed,
-                mesh.primitives[0].mesh.clone(),
-                #[cfg(feature = "handle-physics")]
-                verts,
-                #[cfg(feature = "handle-physics")]
-                indices,
-                materials.add(StandardMaterial {
-                    base_color_texture: Some(
-                        asset_server.load("textures/".to_string() + &node_id.0 + "_diffuse.png"),
-                    ),
-                    // normal_map_texture: Some(textures.4),
-                    // flip_normal_map_y: true,
-                    // occlusion_texture: Some(textures.2),
-                    ..default()
-                }),
+            commands.spawn((
+                PrefabBundle::new(
+                    #[cfg(feature = "handle-physics")]
+                    RigidBody::Fixed,
+                    mesh.primitives[0].mesh.clone(),
+                    #[cfg(feature = "handle-physics")]
+                    verts,
+                    #[cfg(feature = "handle-physics")]
+                    indices,
+                    materials.add(StandardMaterial {
+                        base_color: Color::PINK,
+                        ..default()
+                    }),
+                ),
+                MaterialPending,
             ));
         }
         game_state.set(HammerState::Game);
