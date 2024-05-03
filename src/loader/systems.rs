@@ -1,13 +1,9 @@
 use bevy::{
-    // asset::LoadState,
     gltf::{Gltf, GltfMesh, GltfNode},
     prelude::*,
 };
 
-#[cfg(feature = "handle-physics")]
 use bevy::render::mesh::Indices;
-
-#[cfg(feature = "handle-physics")]
 use bevy_rapier3d::dynamics::RigidBody;
 
 use crate::{resources::LevelFolder, HammerState};
@@ -15,12 +11,9 @@ use crate::{resources::LevelFolder, HammerState};
 use super::{
     components::{MaterialPending, PrefabBundle},
     events::LoadLevelEvent,
+    resources::NextLevel,
 };
 
-#[cfg(feature = "level-loader")]
-use super::resources::NextLevel;
-
-#[cfg(feature = "level-loader")]
 pub fn fetch_level_handle(
     lvl_folder: Res<LevelFolder>,
     mut lvl_ev: EventReader<LoadLevelEvent>,
@@ -37,7 +30,6 @@ pub fn fetch_level_handle(
         state.set(HammerState::Loading);
     }
 }
-#[cfg(feature = "level-loader")]
 pub fn assemble_level(
     mut commands: Commands,
     next_lvl: Res<NextLevel>,
@@ -45,7 +37,6 @@ pub fn assemble_level(
     assets_meshes: Res<Assets<GltfMesh>>,
     assets_gltf: Res<Assets<Gltf>>,
     meshes: ResMut<Assets<Mesh>>,
-    asset_server: Res<AssetServer>,
     mut game_state: ResMut<NextState<HammerState>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
@@ -61,17 +52,13 @@ pub fn assemble_level(
             let mesh = assets_meshes
                 .get(mesh_id.mesh.as_ref().unwrap().id())
                 .unwrap();
-            #[cfg(feature = "handle-physics")]
             let (verts, indices) =
                 get_collision_data(node_id.0, &gltf, &assets_nodes, &assets_meshes, &meshes);
             commands.spawn((
                 PrefabBundle::new(
-                    #[cfg(feature = "handle-physics")]
                     RigidBody::Fixed,
                     mesh.primitives[0].mesh.clone(),
-                    #[cfg(feature = "handle-physics")]
                     verts,
-                    #[cfg(feature = "handle-physics")]
                     indices,
                     materials.add(StandardMaterial {
                         base_color: Color::PINK,
@@ -85,7 +72,6 @@ pub fn assemble_level(
     }
 }
 
-#[cfg(feature = "handle-physics")]
 fn build_colliders(prim_mesh: Mesh) -> (Vec<Vec3>, Vec<[u32; 3]>) {
     let (vert_buffer, idx_buffer) = (prim_mesh.attributes(), prim_mesh.indices().unwrap());
     let mut vertices: Vec<Vec3> = vec![];
@@ -112,7 +98,6 @@ fn build_colliders(prim_mesh: Mesh) -> (Vec<Vec3>, Vec<[u32; 3]>) {
     (vertices, indices)
 }
 
-#[cfg(feature = "handle-physics")]
 pub fn get_collision_data(
     base_mesh: &String,
     gltf: &Gltf,

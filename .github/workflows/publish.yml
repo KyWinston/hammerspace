@@ -1,8 +1,8 @@
 on:
   push:
     # Pattern matched against refs/tags
-    tags:        
-      - '*'           # Push events to every tag not containing /
+    tags:
+      - "*" # Push events to every tag not containing /
   workflow_dispatch:
 
 name: Publish
@@ -21,6 +21,10 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
       - run: sudo apt-get install g++ pkg-config libx11-dev libasound2-dev libudev-dev libxkbcommon-x11-0 && cargo publish --token ${CRATES_TOKEN}
         env:
           CRATES_TOKEN: ${{secrets.CRATES_TOKEN}}

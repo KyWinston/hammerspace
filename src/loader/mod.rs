@@ -1,11 +1,9 @@
 use bevy::prelude::*;
 
-#[cfg(feature = "level-loader")]
 use crate::HammerState;
 
 use self::events::LoadLevelEvent;
 
-#[cfg(feature = "level-loader")]
 use self::systems::{assemble_level, fetch_level_handle};
 
 pub mod components;
@@ -17,7 +15,6 @@ pub struct LoaderPlugin;
 impl Plugin for LoaderPlugin {
     fn build(&self, app: &mut App) {
         app.add_event::<LoadLevelEvent>();
-        #[cfg(feature = "level-loader")]
         app.add_systems(
             Update,
             (
