@@ -30,6 +30,7 @@ pub fn fetch_level_handle(
         state.set(HammerState::Loading);
     }
 }
+
 pub fn assemble_level(
     mut commands: Commands,
     next_lvl: Res<NextLevel>,
@@ -68,6 +69,7 @@ pub fn assemble_level(
                 MaterialPending,
             ));
         }
+        println!("starting game");
         game_state.set(HammerState::Game);
     }
 }
