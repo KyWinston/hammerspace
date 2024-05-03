@@ -7,6 +7,7 @@ use super::{components::PanOrbitCamera, PANNING_KEYS};
 pub fn spawn_cameras(mut commands: Commands) {
     let gamepad = Gamepad::new(0);
     commands.insert_resource(Controller(gamepad));
+    println!("add camera");
     commands.spawn((Camera3dBundle {
         camera: Camera {
             is_active: false,
@@ -51,6 +52,7 @@ pub fn switch_to_game_view(
     mut edit_cam: Query<&mut Camera, With<PanOrbitCamera>>,
     mut game_cam: Query<&mut Camera, Without<PanOrbitCamera>>,
 ) {
+    println!("game view");
     if let Ok(mut edit_cam) = edit_cam.get_single_mut() {
         edit_cam.is_active = false;
     }
