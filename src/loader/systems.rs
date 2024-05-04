@@ -61,15 +61,11 @@ pub fn assemble_level(
                     mesh.primitives[0].mesh.clone(),
                     verts,
                     indices,
-                    materials.add(StandardMaterial {
-                        base_color: Color::PINK,
-                        ..default()
-                    }),
+                    materials.add(Painterly::default()),
                 ),
                 MaterialPending,
             ));
         }
-        println!("starting game");
         game_state.set(HammerState::Game);
     }
 }
