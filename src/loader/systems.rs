@@ -126,9 +126,9 @@ pub fn get_collision_data(
 
 pub fn assemble_collider(
     gltf: &Gltf,
-    gltf_nodes: Res<Assets<GltfNode>>,
-    meshes: Res<Assets<Mesh>>,
-    gltf_meshes: Res<Assets<GltfMesh>>,
+    gltf_nodes: &Res<Assets<GltfNode>>,
+    meshes: &Res<Assets<Mesh>>,
+    gltf_meshes: &Res<Assets<GltfMesh>>,
 ) -> Collider {
     Collider::compound(
         gltf.nodes
