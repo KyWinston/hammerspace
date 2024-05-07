@@ -1,7 +1,7 @@
 [package]
 name = "hammerspace"
 description = "A plugin for loading and debugging gltf scenes"
-repository = "https://github.com/KyleWinston/hammerspace"
+repository = "https://github.com/KyWinston/hammerspace"
 version = "0.1.27"
 authors = ["Ky Roberts", "Ky Roberts<kywinston@proton.me>"]
 edition = "2021"
