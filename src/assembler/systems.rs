@@ -10,6 +10,7 @@ pub fn assemble_collider(
     gltf_nodes: &Res<Assets<GltfNode>>,
     meshes: &Res<Assets<Mesh>>,
     gltf_meshes: &Res<Assets<GltfMesh>>,
+    convex_hull: bool,
 ) -> Collider {
     Collider::compound(
         gltf.nodes
@@ -53,7 +54,11 @@ pub fn assemble_collider(
                                     .clone(),
                             )
                             .expect("No Mesh found for GLTF mesh"),
-                        &ComputedColliderShape::ConvexHull,
+                        if convex_hull {
+                            &ComputedColliderShape::ConvexHull
+                        } else {
+                            &ComputedColliderShape::TriMesh
+                        },
                     )
                     .expect("Could not create collider from bevy mesh"),
                 )
