@@ -1,9 +1,8 @@
 use bevy::{
-    gltf::{Gltf, GltfMesh, GltfNode},
+    // gltf::{Gltf, GltfMesh, GltfNode},
     prelude::*,
 };
 
-use bevy_rapier3d::geometry::{Collider, ComputedColliderShape};
 
 pub fn assemble_collider(
     gltf: &Gltf,

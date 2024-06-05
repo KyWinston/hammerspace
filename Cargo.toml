@@ -11,17 +11,19 @@ license = "MIT OR Apache-2.0"
 keywords = ["bevy"]
 resolver = "2"
 
-
 [dependencies]
-bevy = { version = "0.13.2", default-features = false, features = [
-    "multi-threaded",     # Run with multithreading
-    "bevy_asset",         # Assets management
-    "bevy_scene",         # Scenes management
-    "bevy_gltf",          # GLTF 3D assets format support
-    "dynamic_linking",
-    "asset_processor",    # Asset processing
-] }
-bevy_rapier3d = "0.25.0"
+async-executor = "1.12.0"
+# bevy = { version = "0.13.2", default-features = false, features = [
+#     "multi-threaded",     # Run with multithreading
+#     "bevy_asset",         # Assets management
+#     "bevy_scene",         # Scenes management
+#     "bevy_gltf",          # GLTF 3D assets format support
+#     "dynamic_linking",
+#     "asset_processor",    # Asset processing
+# ] }
+bevy = { git = "https://github.com/bevyengine/bevy", branch = "main" }
+
+# bevy_rapier3d = { git = "https://github.com/KyWinston/bevy_rapier", branch = "master" }
 
 # Enable only a small amount of optimization in debug mode
 [profile.dev]

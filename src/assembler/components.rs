@@ -1,6 +1,5 @@
 use bevy::prelude::*;
-
-use bevy_rapier3d::{dynamics::RigidBody, geometry::Collider};
+use bevy::{math::Vec3, render::mesh::Mesh};
 
 #[derive(Component)]
 pub struct MaterialPending;
