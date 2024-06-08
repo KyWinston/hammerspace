@@ -1,8 +1,8 @@
 use bevy::{
-    // gltf::{Gltf, GltfMesh, GltfNode},
+    gltf::{Gltf, GltfMesh, GltfNode},
     prelude::*,
 };
-
+use bevy_rapier3d::geometry::{Collider, ComputedColliderShape};
 
 pub fn assemble_collider(
     gltf: &Gltf,
@@ -36,7 +36,7 @@ pub fn assemble_collider(
                     Collider::from_bevy_mesh(
                         meshes
                             .get(
-                                gltf_meshes
+                                &gltf_meshes
                                     .get(
                                         &gltf_nodes
                                             .get(x)
@@ -53,15 +53,13 @@ pub fn assemble_collider(
                                     .clone(),
                             )
                             .expect("No Mesh found for GLTF mesh"),
-                        if convex_hull {
-                            &ComputedColliderShape::ConvexHull
-                        } else {
-                            &ComputedColliderShape::TriMesh
-                        },
-                    )
-                    .expect("Could not create collider from bevy mesh"),
+                            if convex_hull {
+                                &ComputedColliderShape::ConvexHull
+                            } else {
+                                &ComputedColliderShape::TriMesh
+                            },                    
+                        ).expect("could not create collider from bevy mesh")
                 )
-            })
-            .collect(),
+            }).collect(),
     )
 }

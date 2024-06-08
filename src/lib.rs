@@ -11,7 +11,7 @@ pub struct HammerspacePlugin {
 
 impl Plugin for HammerspacePlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(LoaderPlugin);
-        app.insert_resource::<LevelFolder>(LevelFolder(self.level_folder.to_string()));
+        app.add_plugins(LoaderPlugin)
+            .insert_resource::<LevelFolder>(LevelFolder(self.level_folder.to_string()));
     }
 }
