@@ -2,7 +2,7 @@ use bevy::{
     gltf::{Gltf, GltfMesh, GltfNode},
     prelude::*,
 };
-use bevy_rapier3d::geometry::{Collider, ComputedColliderShape};
+use bevy_xpbd_3d::prelude::Collider;
 
 pub fn assemble_collider(
     gltf: &Gltf,
@@ -22,6 +22,31 @@ pub fn assemble_collider(
                     .is_none()
             })
             .map(|x| {
+                let collider: Collider;
+                let mesh = meshes
+                    .get(
+                        &gltf_meshes
+                            .get(
+                                &gltf_nodes
+                                    .get(x)
+                                    .expect("Node not found for loaded gltf")
+                                    .mesh
+                                    .clone()
+                                    .expect("Gltf Mesh not found in Node"),
+                            )
+                            .expect("Mesh not found for gltf mesh")
+                            .primitives
+                            .first()
+                            .expect("No primitive found for Mesh")
+                            .mesh
+                            .clone(),
+                    )
+                    .expect("No Mesh found for GLTF mesh");
+                if convex_hull {
+                    collider = Collider::convex_decomposition_from_mesh(mesh).unwrap();
+                } else {
+                    collider = Collider::trimesh_from_mesh(mesh).unwrap();
+                }
                 (
                     gltf_nodes
                         .get(x)
@@ -33,33 +58,9 @@ pub fn assemble_collider(
                         .expect("Node not found for loaded gltf")
                         .transform
                         .rotation,
-                    Collider::from_bevy_mesh(
-                        meshes
-                            .get(
-                                &gltf_meshes
-                                    .get(
-                                        &gltf_nodes
-                                            .get(x)
-                                            .expect("Node not found for loaded gltf")
-                                            .mesh
-                                            .clone()
-                                            .expect("Gltf Mesh not found in Node"),
-                                    )
-                                    .expect("Mesh not found for gltf mesh")
-                                    .primitives
-                                    .first()
-                                    .expect("No primitive found for Mesh")
-                                    .mesh
-                                    .clone(),
-                            )
-                            .expect("No Mesh found for GLTF mesh"),
-                            if convex_hull {
-                                &ComputedColliderShape::ConvexHull
-                            } else {
-                                &ComputedColliderShape::TriMesh
-                            },                    
-                        ).expect("could not create collider from bevy mesh")
+                    collider,
                 )
-            }).collect(),
+            })
+            .collect(),
     )
 }
