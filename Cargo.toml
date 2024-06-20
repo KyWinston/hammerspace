@@ -9,7 +9,7 @@ authors = ["Ky Roberts", "Ky Roberts<kywinston@proton.me>"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
 keywords = ["bevy"]
-resolver = "2"
+publish = true
 
 [dependencies]
 async-executor = "1.12.0"
