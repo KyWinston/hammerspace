@@ -1,24 +1,24 @@
 [package]
 name = "hammerspace"
 description = "A plugin for loading and debugging gltf scenes"
-
 repository = "https://github.com/KyWinston/hammerspace"
 version = "0.1.30"
-
-authors = ["Ky Roberts", "Ky Roberts<kywinston@proton.me>"]
-edition = "2021"
+authors.workspace = true
+edition.workspace = true
 license = "MIT OR Apache-2.0"
 keywords = ["bevy"]
 publish = true
 
 [dependencies]
 async-executor = "1.12.0"
-bevy = { workspace = true, default-features = false, features = [
-    "bevy_asset",      # Assets management
-    "bevy_scene",      # Scenes management
-    "bevy_render",
-    "bevy_gltf",       # GLTF 3D assets format support
-    "asset_processor", # Asset processing
+bevy = { workspace = true, default-features = true, features = [
+    "bevy_asset",         # Assets management
+    "bevy_scene",         # Scenes management
+    "bevy_core_pipeline",
+    "bevy_winit",
+    "bevy_gltf",          # GLTF 3D assets format support
+    "asset_processor",    # Asset processing
 ] }
+# bevy-inspector-egui.workspace = true
 bevy_xpbd_3d = { workspace = true }
 nalgebra = { workspace = true }
