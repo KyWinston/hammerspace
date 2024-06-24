@@ -15,9 +15,12 @@ pub fn get_path(
     mut path_ev: EventReader<PathEvent>,
 ) {
     for ev in path_ev.read() {
+        if handles.0.is_none(){
+            return;
+        }
         if handles.1.is_none() {
             // Get the gltf struct loaded from the file
-            let Some(gltf) = gltfs.get(&handles.0) else {
+            let Some(gltf) = gltfs.get(handles.0.as_mut().unwrap()) else {
                 return;
             };
             // Get the mesh called `navmesh`

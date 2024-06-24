@@ -22,5 +22,4 @@ bevy = { workspace = true, default-features = true, features = [
 bevy-inspector-egui.workspace = true
 bevy_xpbd_3d = { workspace = true }
 nalgebra = { workspace = true }
-rand = "0.8.5"
 vleue_navigator = "0.8.0-rc.3"
