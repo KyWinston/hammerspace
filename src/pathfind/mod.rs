@@ -10,6 +10,6 @@ pub struct PathFindPlugin;
 
 impl Plugin for PathFindPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(VleueNavigatorPlugin).add_systems(Update, get_path)
+        app.add_plugins(VleueNavigatorPlugin).add_systems(Update, get_path);
     }
 }
