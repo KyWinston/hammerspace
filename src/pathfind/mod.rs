@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use systems::get_path;
 use vleue_navigator::VleueNavigatorPlugin;
 
 pub mod components;
@@ -9,6 +10,6 @@ pub struct PathFindPlugin;
 
 impl Plugin for PathFindPlugin {
     fn build(&self, app: &mut App) {
-        app.add_plugins(VleueNavigatorPlugin);
+        app.add_plugins(VleueNavigatorPlugin).add_systems(Update, get_path)
     }
 }
