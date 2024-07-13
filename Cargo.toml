@@ -11,7 +11,7 @@ publish = true
 
 [dependencies]
 async-executor = "1.12.0"
-bevy = { workspace = true, default-features = true, features = [
+bevy = { version = "0.14.0", workspace = true, default-features = false, features = [
     "bevy_asset",         # Assets management
     "bevy_scene",         # Scenes management
     "bevy_core_pipeline",
@@ -19,7 +19,10 @@ bevy = { workspace = true, default-features = true, features = [
     "bevy_gltf",          # GLTF 3D assets format support
     "asset_processor",    # Asset processing
 ] }
-bevy-inspector-egui.workspace = true
-bevy_xpbd_3d = { workspace = true }
-nalgebra = { workspace = true }
+avian3d = { version = "0.1", workspace = true }
 vleue_navigator = "0.8.0-rc.3"
+bevy_gltf_components = "0.5.1"
+bevy_gltf_blueprints = "0.10.2"
+bevy_gltf_save_load = "0.4.1"
+bevy_registry_export = "0.3.1"
+sickle_ui = { rev = "a548517", git = "https://github.com/UmbraLuminosa/sickle_ui" }

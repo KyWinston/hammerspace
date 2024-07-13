@@ -7,17 +7,17 @@ use vleue_navigator::{NavMesh, Path};
 pub struct FindingPath(pub Arc<RwLock<(Option<Path>, bool)>>);
 
 #[derive(Component)]
-struct Navigator {
-    speed: f32,
+pub struct Navigator {
+    pub speed: f32,
 }
 
 #[derive(Component)]
 pub struct Target {
-    target: Vec2,
-    navmesh: Handle<NavMesh>,
+    pub target: Vec2,
+    pub navmesh: Handle<NavMesh>,
 }
 
 #[derive(Component)]
-struct PathNodes {
-    path: Vec<Vec2>,
+pub struct PathNodes {
+    pub path: Vec<Vec2>,
 }
