@@ -3314,6 +3314,7 @@ dependencies = [
  "bevy_quill_obsidian",
  "bevy_quill_obsidian_inspect",
  "bevy_registry_export",
+ "cfg-if",
  "vleue_navigator",
 ]
 

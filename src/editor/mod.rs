@@ -1,12 +1,10 @@
-#![feature(impl_trait_in_assoc_type)]
-
 use std::sync::Arc;
 
 use bevy::prelude::*;
-use bevy_mod_picking::{backends::raycast::RaycastBackendSettings, DefaultPickingPlugins};
+
 use bevy_mod_picking::debug::DebugPickingMode;
 use bevy_mod_picking::focus::HoverMap;
-
+use bevy_mod_picking::{backends::raycast::RaycastBackendSettings, DefaultPickingPlugins};
 use bevy_mod_stylebuilder::StyleBuilderLayout;
 use bevy_quill::*;
 use bevy_quill_obsidian::*;
@@ -16,11 +14,15 @@ use controls::{
     Slider, Splitter, SplitterDirection, ToolButton, ToolPalette,
 };
 use focus::TabGroup;
-use hammerspace::pathfind::events::PathEvent;
-use hammerspace::HammerspacePlugin;
+
 use resources::{ClickLog, PanelWidth, SelectedShape, TestStruct, TestStruct2, TestStruct3};
-use styles::{style_aside, style_button_flex, style_button_row, style_column_group, style_main, style_scroll_area, style_slider, wrapper_style};
-use systems::{close_on_esc, enter_preview_mode, exit_preview_mode, rotate, setup, setup_ui, start_editor};
+use styles::{
+    style_aside, style_button_flex, style_button_row, style_column_group, style_main,
+    style_scroll_area, style_slider, wrapper_style,
+};
+use systems::{
+    close_on_esc, enter_preview_mode, exit_preview_mode, rotate, setup, setup_ui, start_editor,
+};
 
 pub mod components;
 pub mod resources;
@@ -109,62 +111,62 @@ impl ViewTemplate for NodeGraphDemo {
         // ()
     }
 }
+pub struct EditorPlugin;
 
-fn main() {
-    App::new()
-        .init_resource::<HoverMap>()
-        .insert_resource(RaycastBackendSettings {
-            require_markers: true,
-            ..default()
-        })
-
-        .init_resource::<SelectedShape>()
-        .init_resource::<TrackingScopeTracing>()
-        .init_resource::<ClickLog>()
-        .insert_resource(TestStruct {
-            unlit: Some(true),
-            ..default()
-        })
-        .insert_resource(TestStruct2 {
-            nested: TestStruct::default(),
-            ..default()
-        })
-        .insert_resource(TestStruct3(true))
-        .insert_resource(PanelWidth(200.))
-        .init_resource::<viewport::ViewportInset>()
-
-        .add_plugins((
-            InspectorPlugin,
-            DefaultPlugins.set(ImagePlugin::default_nearest()),
-            DefaultPickingPlugins,
-            HammerspacePlugin {
-                level_folder: "levels".to_string(),
-            },
-            QuillPlugin,
-            ObsidianUiPlugin,
-        ))
-        .insert_resource(DebugPickingMode::Disabled)
-        .init_state::<EditorState>()
-        .add_event::<PathEvent>()
-        .add_systems(Startup, (setup, setup_ui.pipe(start_editor)))
-        .add_systems(
-            Update,
-            (
-                close_on_esc,
-                rotate.run_if(in_state(EditorState::Preview)),
-                rotate.run_if(in_state(EditorState::Split)),
-                viewport::update_viewport_inset.run_if(in_state(EditorState::Preview)),
-                viewport::update_viewport_inset.run_if(in_state(EditorState::Split)),
-                viewport::update_camera_viewport.run_if(in_state(EditorState::Preview)),
-                viewport::update_camera_viewport.run_if(in_state(EditorState::Split)),
-            ),
-        )
-        .add_systems(OnEnter(EditorState::Preview), enter_preview_mode)
-        .add_systems(OnExit(EditorState::Preview), exit_preview_mode)
-        .add_systems(OnEnter(EditorState::Split), enter_preview_mode)
-        .add_systems(OnExit(EditorState::Split), exit_preview_mode)
-        .run();
-}
+impl Plugin for EditorPlugin {
+    fn build(&self, app: &mut App) {
+            #[cfg(feature="editor")]
+            app.init_resource::<HoverMap>()
+                .insert_resource(RaycastBackendSettings {
+                    require_markers: true,
+                    ..default()
+                })
+                .init_resource::<SelectedShape>()
+                .init_resource::<TrackingScopeTracing>()
+                .init_resource::<ClickLog>()
+                .insert_resource(TestStruct {
+                    unlit: Some(true),
+                    ..default()
+                })
+                .insert_resource(TestStruct2 {
+                    nested: TestStruct::default(),
+                    ..default()
+                })
+                .insert_resource(TestStruct3(true))
+                .insert_resource(PanelWidth(200.))
+                .init_resource::<viewport::ViewportInset>()
+                .add_plugins((
+                    InspectorPlugin,
+                    DefaultPlugins.set(ImagePlugin::default_nearest()),
+                    DefaultPickingPlugins,
+                    HammerspacePlugin {
+                        level_folder: "levels".to_string(),
+                    },
+                    QuillPlugin,
+                    ObsidianUiPlugin,
+                ))
+                .insert_resource(DebugPickingMode::Disabled)
+                .init_state::<EditorState>()
+                .add_event::<PathEvent>()
+                .add_systems(Startup, (setup, setup_ui.pipe(start_editor)))
+                .add_systems(
+                    Update,
+                    (
+                        close_on_esc,
+                        rotate.run_if(in_state(EditorState::Preview)),
+                        rotate.run_if(in_state(EditorState::Split)),
+                        viewport::update_viewport_inset.run_if(in_state(EditorState::Preview)),
+                        viewport::update_viewport_inset.run_if(in_state(EditorState::Split)),
+                        viewport::update_camera_viewport.run_if(in_state(EditorState::Preview)),
+                        viewport::update_camera_viewport.run_if(in_state(EditorState::Split)),
+                    ),
+                )
+                .add_systems(OnEnter(EditorState::Preview), enter_preview_mode)
+                .add_systems(OnExit(EditorState::Preview), exit_preview_mode)
+                .add_systems(OnEnter(EditorState::Split), enter_preview_mode)
+                .add_systems(OnExit(EditorState::Split), exit_preview_mode);
+        }
+    }
 
 /// A view template
 #[derive(Clone, PartialEq)]

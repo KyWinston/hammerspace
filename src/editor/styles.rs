@@ -1,8 +1,7 @@
-use bevy::prelude::*;
+
+#[cfg(debug_assertions)]
 use bevy_mod_stylebuilder::{StyleBuilder, StyleBuilderBackground, StyleBuilderBorderColor, StyleBuilderLayout, StyleBuilderPointerEvents};
 use bevy_quill_obsidian::colors;
-
-
 
 pub fn style_main(ss: &mut StyleBuilder) {
     ss.position(PositionType::Absolute)

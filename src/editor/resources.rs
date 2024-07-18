@@ -1,7 +1,7 @@
 use bevy::prelude::*;
-use bevy_quill_obsidian_inspect::{Precision, ValueRange};
 
-use crate::TestEnum;
+#[cfg(feature = "editor")]
+use bevy_quill_obsidian_inspect::{Precision, ValueRange};
 
 #[derive(Resource)]
 pub struct PanelWidth(pub f32);

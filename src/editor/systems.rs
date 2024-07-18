@@ -2,11 +2,11 @@ use std::f32::consts::PI;
 
 use bevy::{color::palettes::css::SILVER, render::{render_asset::RenderAssetUsages, render_resource::{Extent3d, TextureDimension, TextureFormat}, texture::Image}};
 use bevy::prelude::*;
+
 use bevy_mod_picking::{backends::raycast::RaycastPickable, events::{Down, Pointer}, prelude::{ListenerMut, On}};
 use bevy_quill::View;
 use bevy_quill_obsidian::viewport;
 
-use crate::{components::Shape, resources::{PreviewEntities, SelectedShape}, MainDock, X_EXTENT};
 
 pub fn setup(
     mut commands: Commands,
