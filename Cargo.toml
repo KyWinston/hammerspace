@@ -1,5 +1,3 @@
-cargo-features = ["edition2024"]
-
 [package]
 name = "hammerspace"
 description = "A plugin for the loading and management of levels and scenes, and their physical properties"
