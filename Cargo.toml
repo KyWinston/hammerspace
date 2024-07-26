@@ -57,3 +57,4 @@ editor = [
     "dep:bevy_mod_stylebuilder",
     "dep:bevy_mod_picking",
 ]
+debug = []

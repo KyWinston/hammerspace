@@ -22,11 +22,13 @@ impl Plugin for HammerspacePlugin {
             LoaderPlugin,
             PathFindPlugin,
             PhysicsPlugins::default(),
+            #[cfg(feature="debug")]
             PhysicsDebugPlugin::default(),
         ));
+        
         #[cfg(feature="editor")]
         app.add_plugins(EditorPlugin);
-
+        
         app.add_event::<PathEvent>()
             .insert_resource::<LevelFolder>(LevelFolder(self.level_folder.to_string()));
     }
