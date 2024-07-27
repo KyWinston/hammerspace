@@ -1,4 +1,4 @@
-cargo-features = ["edition2024"]
+# cargo-features = ["edition2024"]
 
 [package]
 name = "hammerspace"
@@ -6,7 +6,7 @@ description = "A plugin for the loading and management of levels and scenes, and
 repository = "https://github.com/KyWinston/hammerspace"
 version = "0.1.33"
 authors = ["Ky Winston<kwinston@proton.me>"]
-edition = "2024"
+edition = "2021"
 license = "MIT OR Apache-2.0"
 keywords = ["bevy"]
 publish = true
