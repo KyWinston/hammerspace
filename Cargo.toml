@@ -1,4 +1,3 @@
-# cargo-features = ["edition2024"]
 
 [package]
 name = "hammerspace"
@@ -13,7 +12,7 @@ publish = true
 
 [dependencies]
 async-executor = "1.12.0"
-bevy = { version = "0.14.0", default-features = false, features = [
+bevy = { version = "0.14.1", default-features = false, features = [
     "bevy_asset",         # Assets management
     "bevy_scene",         # Scenes management
     "bevy_state",
@@ -24,37 +23,22 @@ bevy = { version = "0.14.0", default-features = false, features = [
 ] }
 avian3d = "0.1.0"
 vleue_navigator = "0.8.0-rc.3"
-bevy_panorbit_camera = "0.19.1"
-bevy_gltf_components = "0.5.1"
-bevy_gltf_blueprints = "0.10.2"
-bevy_gltf_save_load = "0.4.1"
-bevy_registry_export = "0.3.1"
+bevy_registry_export = { version = "0.3.1", optional = true }
+bevy_panorbit_camera = { version = "0.19.1", optional = true }
+bevy_gltf_components = { version = "0.5.1", optional = true }
+bevy_gltf_blueprints = { version = "0.10.2", optional = true }
+bevy_gltf_save_load = { version = "0.4.1", optional = true }
 cfg-if = "1.0.0"
-
-[target.dev.build-dependencies]
-bevy = { version = "0.14.0", default-features = false, features = [
-    "bevy_asset",         # Assets management
-    "bevy_scene",
-    "bevy_state",         # Scenes management
-    "bevy_core_pipeline",
-    "bevy_winit",
-    "x11",
-    "bevy_gltf",          # GLTF 3D assets format support
-    "asset_processor",    # Asset processing
-] }
-cfg-if = "1.0.0"
-bevy_quill = { version = "0.1.2", optional = true }
-bevy_quill_obsidian = { version = "0.1.0", optional = true }
-bevy_quill_obsidian_inspect = { version = "0.1.0", optional = true }
-bevy_mod_stylebuilder = { version = "0.1.1", optional = true }
-bevy_mod_picking = { version = "0.20.1", optional = true }
+sickle_ui = { version = "0.2.1", optional = true }
 
 [features]
+default = []
 editor = [
-    "dep:bevy_quill",
-    "dep:bevy_quill_obsidian",
-    "dep:bevy_quill_obsidian_inspect",
-    "dep:bevy_mod_stylebuilder",
-    "dep:bevy_mod_picking",
+    "dep:sickle_ui",
+    "dep:bevy_registry_export",
+    "dep:bevy_panorbit_camera",
+    "dep:bevy_gltf_components",
+    "dep:bevy_gltf_blueprints",
+    "dep:bevy_gltf_save_load",
 ]
 debug = []

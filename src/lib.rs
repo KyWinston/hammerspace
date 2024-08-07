@@ -1,13 +1,16 @@
-
 use assembler::LoaderPlugin;
-use avian3d::{debug_render::PhysicsDebugPlugin, PhysicsPlugins};
+use avian3d::PhysicsPlugins;
 use bevy::prelude::*;
+
+#[cfg(feature = "editor")]
+use editor::EditorPlugin;
+
 use pathfind::{events::PathEvent, PathFindPlugin};
 use resources::LevelFolder;
 
-pub mod assembler;
 
-#[cfg(feature="editor")]
+pub mod assembler;
+#[cfg(feature = "editor")]
 pub mod editor;
 
 pub mod pathfind;
@@ -22,13 +25,12 @@ impl Plugin for HammerspacePlugin {
             LoaderPlugin,
             PathFindPlugin,
             PhysicsPlugins::default(),
-            #[cfg(feature="debug")]
+            #[cfg(feature = "debug")]
             PhysicsDebugPlugin::default(),
         ));
-        
-        #[cfg(feature="editor")]
+
+        #[cfg(feature = "editor")]
         app.add_plugins(EditorPlugin);
-        
         app.add_event::<PathEvent>()
             .insert_resource::<LevelFolder>(LevelFolder(self.level_folder.to_string()));
     }

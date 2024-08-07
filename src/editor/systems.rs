@@ -1,179 +1,775 @@
-use std::f32::consts::PI;
-
-use bevy::{color::palettes::css::SILVER, render::{render_asset::RenderAssetUsages, render_resource::{Extent3d, TextureDimension, TextureFormat}, texture::Image}};
 use bevy::prelude::*;
+use sickle_ui::{
+    dev_panels::{
+        hierarchy::UiHierarchyExt,
+        scene_view::{SceneView, UiSceneViewExt},
+    },
+    prelude::*,
+    ui_commands::{SetCursorExt, UpdateStatesExt},
+};
 
-use bevy_mod_picking::{backends::raycast::RaycastPickable, events::{Down, Pointer}, prelude::{ListenerMut, On}};
-use bevy_quill::View;
-use bevy_quill_obsidian::viewport;
+use super::{
+    components::{
+        ExitAppButton, HierarchyPanel, Page, ShowcaseContainer, ThemeContrastSelect, ThemeSwitch,
+        UiCamera, UiMainRootNode,
+    },
+    UiOutlinedBlockExt, UiTextureAtlasInteractionExt, UiUiFooterRootNodeExt,
+};
 
-
-pub fn setup(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut images: ResMut<Assets<Image>>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
-) {
-    let shapes = [
-        meshes.add(Cuboid::default()),
-        meshes.add(Capsule3d::default()),
-        meshes.add(Torus::default()),
-        meshes.add(Cylinder::default()),
-        meshes.add(Sphere::default().mesh().ico(5).unwrap()),
-        meshes.add(Sphere::default().mesh().uv(32, 18)),
-    ];
-
-    let num_shapes = shapes.len();
-    let debug_material = materials.add(StandardMaterial {
-        base_color_texture: Some(images.add(uv_debug_texture())),
-        ..default()
-    });
-    let shapes_parent = commands
-        .spawn((
-            SpatialBundle { ..default() },
-            // BackdropPickable,
-            On::<Pointer<Down>>::run(
-                |mut event: ListenerMut<Pointer<Down>>,
-                 shapes: Query<&Shape>,
-                 mut selection: ResMut<SelectedShape>| {
-                    if shapes.get(event.target).is_ok() {
-                        selection.0 = Some(event.target);
-                        // println!("Pointer down on shape {:?}", event.target);
-                    } else {
-                        selection.0 = None;
-                        // println!("Pointer down on backdrop {:?}", event.target);
-                    }
-                    event.stop_propagation();
-                },
-            ),
-        ))
-        .id();
-
-    for (i, shape) in shapes.into_iter().enumerate() {
-        commands
-            .spawn((
-                PbrBundle {
-                    mesh: shape,
-                    material: debug_material.clone(),
-                    transform: Transform::from_xyz(
-                        -X_EXTENT / 2. + i as f32 / (num_shapes - 1) as f32 * X_EXTENT,
-                        2.0,
-                        0.0,
-                    )
-                    .with_rotation(Quat::from_rotation_x(PI / 4.)),
-                    ..default()
-                },
-                Shape,
-                // PickableBundle::default(),
-                RaycastPickable,
-            ))
-            .set_parent(shapes_parent);
-    }
-
-    commands.spawn(PointLightBundle {
-        point_light: PointLight {
-            // intensity: 9000.0,
-            intensity: 10000000.0,
-            range: 100.,
-            shadows_enabled: true,
-            ..default()
+pub fn get_selected_scheme(
+    theme_switch: &RadioGroup,
+    theme_contrast_select: &Dropdown,
+) -> Option<Scheme> {
+    let contrast = match theme_contrast_select.value() {
+        Some(index) => match index {
+            0 => Contrast::Standard,
+            1 => Contrast::Medium,
+            2 => Contrast::High,
+            _ => Contrast::Standard,
         },
-        transform: Transform::from_xyz(8.0, 16.0, 8.0),
-        ..default()
-    });
+        None => Contrast::Standard,
+    };
 
-    // ground plane
-    commands.spawn(PbrBundle {
-        mesh: meshes.add(Plane3d::default().mesh().size(50.0, 50.0)),
-        material: materials.add(Color::from(SILVER)),
-        ..default()
-    });
+    if let Some(index) = theme_switch.selected() {
+        let scheme = match index {
+            0 => Scheme::Light(contrast),
+            1 => Scheme::Dark(contrast),
+            _ => Scheme::Light(contrast),
+        };
+
+        Some(scheme)
+    } else {
+        None
+    }
 }
 
-pub fn start_editor(camera: In<Entity>, mut commands: Commands) {
-    commands.spawn(MainDock(*camera).to_root());
+pub fn handle_theme_contrast_select(
+    mut theme_data: ResMut<ThemeData>,
+    q_theme_switch: Query<&RadioGroup, With<ThemeSwitch>>,
+    q_theme_contrast_select: Query<&Dropdown, (With<ThemeContrastSelect>, Changed<Dropdown>)>,
+) {
+    let Ok(theme_contrast_select) = q_theme_contrast_select.get_single() else {
+        return;
+    };
+
+    let Ok(theme_switch) = q_theme_switch.get_single() else {
+        return;
+    };
+
+    if let Some(scheme) = get_selected_scheme(theme_switch, theme_contrast_select) {
+        if theme_data.active_scheme != scheme {
+            theme_data.active_scheme = scheme;
+        }
+    }
 }
 
-pub fn setup_ui(mut commands: Commands) -> Entity {
-    commands
-        .spawn((Camera2dBundle {
-            camera: Camera {
-                // HUD goes on top of 3D
-                order: 1,
-                clear_color: ClearColorConfig::None,
-                ..default()
-            },
-            camera_2d: Camera2d {},
-            ..default()
-        },))
-        .id()
+pub fn handle_theme_switch(
+    mut theme_data: ResMut<ThemeData>,
+    q_theme_switch: Query<&RadioGroup, (With<ThemeSwitch>, Changed<RadioGroup>)>,
+    q_theme_contrast_select: Query<&Dropdown, With<ThemeContrastSelect>>,
+) {
+    let Ok(theme_switch) = q_theme_switch.get_single() else {
+        return;
+    };
+
+    let Ok(theme_contrast_select) = q_theme_contrast_select.get_single() else {
+        return;
+    };
+
+    if let Some(scheme) = get_selected_scheme(theme_switch, theme_contrast_select) {
+        if theme_data.active_scheme != scheme {
+            theme_data.active_scheme = scheme;
+        }
+    }
 }
 
-pub fn enter_preview_mode(mut commands: Commands) {
-    let camera = commands
+pub fn handle_theme_data_update(
+    theme_data: Res<ThemeData>,
+    mut q_theme_switch: Query<&mut RadioGroup, With<ThemeSwitch>>,
+    mut q_theme_contrast_select: Query<&mut Dropdown, With<ThemeContrastSelect>>,
+) {
+    if theme_data.is_changed() {
+        let Ok(mut theme_switch) = q_theme_switch.get_single_mut() else {
+            return;
+        };
+
+        let Ok(mut theme_contrast_select) = q_theme_contrast_select.get_single_mut() else {
+            return;
+        };
+
+        match theme_data.active_scheme {
+            Scheme::Light(contrast) => {
+                theme_switch.select(0);
+                match contrast {
+                    Contrast::Standard => theme_contrast_select.set_value(0),
+                    Contrast::Medium => theme_contrast_select.set_value(1),
+                    Contrast::High => theme_contrast_select.set_value(2),
+                };
+            }
+            Scheme::Dark(contrast) => {
+                theme_switch.select(1);
+                match contrast {
+                    Contrast::Standard => theme_contrast_select.set_value(0),
+                    Contrast::Medium => theme_contrast_select.set_value(1),
+                    Contrast::High => theme_contrast_select.set_value(2),
+                };
+            }
+        };
+    }
+}
+
+pub fn setup(mut commands: Commands) {
+    // The main camera which will render UI
+    let main_camera = commands
         .spawn((
             Camera3dBundle {
-                transform: Transform::from_xyz(0.0, 6., 12.0)
-                    .looking_at(Vec3::new(0., 1., 0.), Vec3::Y),
-                ..default()
+                camera: Camera {
+                    order: 1,
+                    clear_color: Color::BLACK.into(),
+                    ..default()
+                },
+                transform: Transform::from_translation(Vec3::new(0., 30., 0.))
+                    .looking_at(Vec3::ZERO, Vec3::Y),
+                ..Default::default()
             },
-            viewport::ViewportCamera,
-            RaycastPickable,
-            // BackdropPickable,
+            UiCamera,
         ))
         .id();
 
-    // let overlay = commands.spawn(TransformOverlayDemo.to_root()).id();
-    let overlay = commands.spawn_empty().id();
-    commands.insert_resource(PreviewEntities {
-        camera,
-        _overlay: overlay,
+    // Use the UI builder with plain bundles and direct setting of bundle props
+    let mut root_entity = Entity::PLACEHOLDER;
+    commands
+        .ui_builder(UiRoot)
+        .container(
+            (
+                NodeBundle {
+                    style: Style {
+                        width: Val::Percent(100.0),
+                        height: Val::Percent(100.0),
+                        flex_direction: FlexDirection::Column,
+                        justify_content: JustifyContent::SpaceBetween,
+                        ..default()
+                    },
+                    ..default()
+                },
+                TargetCamera(main_camera),
+            ),
+            |container| {
+                root_entity = container
+                    .spawn((
+                        NodeBundle {
+                            style: Style {
+                                width: Val::Percent(100.0),
+                                height: Val::Percent(100.0),
+                                flex_direction: FlexDirection::Row,
+                                justify_content: JustifyContent::SpaceBetween,
+                                ..default()
+                            },
+                            ..default()
+                        },
+                        UiMainRootNode,
+                    ))
+                    .id();
+
+                container.ui_footer(|_| {});
+            },
+        )
+        .floating_panel(
+            FloatingPanelConfig {
+                title: Some("Root floating panel".into()),
+                ..default()
+            },
+            FloatingPanelLayout {
+                size: Vec2::new(200., 300.),
+                position: Vec2::new(100., 100.).into(),
+                droppable: true,
+            },
+            |_| {},
+        )
+        .insert(TargetCamera(main_camera));
+
+    // Use the UI builder of the root entity with styling applied via commands
+    commands.ui_builder(root_entity).column(|column| {
+        column
+            .style()
+            .width(Val::Percent(100.))
+            .background_color(Color::srgb(0.15, 0.155, 0.16));
+
+        column.menu_bar(|bar| {
+            bar.menu(
+                MenuConfig {
+                    name: "Showcase".into(),
+                    alt_code: KeyCode::KeyS.into(),
+                    ..default()
+                },
+                |menu| {
+                    menu.menu_item(MenuItemConfig {
+                        name: "Layout".into(),
+                        shortcut: vec![KeyCode::KeyL].into(),
+                        alt_code: KeyCode::KeyL.into(),
+                        ..default()
+                    })
+                    .insert(Page::Layout);
+                    menu.menu_item(MenuItemConfig {
+                        name: "Interactions".into(),
+                        shortcut: vec![KeyCode::ControlLeft, KeyCode::KeyI].into(),
+                        alt_code: KeyCode::KeyI.into(),
+                        ..default()
+                    })
+                    .insert(Page::Playground);
+
+                    menu.separator();
+
+                    let icons = ThemeData::default().icons;
+                    menu.menu_item(MenuItemConfig {
+                        name: "Exit".into(),
+                        leading_icon: icons.exit_to_app,
+                        ..default()
+                    })
+                    .insert(ExitAppButton);
+                },
+            );
+            bar.menu(
+                MenuConfig {
+                    name: "Use case".into(),
+                    alt_code: KeyCode::KeyS.into(),
+                    ..default()
+                },
+                |menu| {
+                    menu.menu_item(MenuItemConfig {
+                        name: "Standard menu item".into(),
+                        ..default()
+                    });
+                    menu.menu_item(MenuItemConfig {
+                        name: "Menu item with leading icon".into(),
+                        leading_icon: IconData::Image(
+                            "embedded://sickle_ui/icons/details_menu.png".into(),
+                            Color::WHITE,
+                        ),
+                        ..default()
+                    });
+                    menu.menu_item(MenuItemConfig {
+                        name: "Menu item with trailing icon".into(),
+                        trailing_icon: IconData::Image(
+                            "embedded://sickle_ui/icons/tiles_menu.png".into(),
+                            Color::WHITE,
+                        ),
+                        ..default()
+                    });
+
+                    menu.menu_item(MenuItemConfig {
+                        name: "Menu item with both icons".into(),
+                        leading_icon: IconData::Image(
+                            "embedded://sickle_ui/icons/details_menu.png".into(),
+                            Color::WHITE,
+                        ),
+                        trailing_icon: IconData::Image(
+                            "embedded://sickle_ui/icons/tiles_menu.png".into(),
+                            Color::WHITE,
+                        ),
+                        ..default()
+                    });
+
+                    menu.separator();
+
+                    menu.toggle_menu_item(ToggleMenuItemConfig {
+                        name: "Toggle item".into(),
+                        shortcut: vec![KeyCode::ControlLeft, KeyCode::KeyT].into(),
+                        ..default()
+                    });
+                    menu.toggle_menu_item(ToggleMenuItemConfig {
+                        name: "Already toggled item".into(),
+                        initially_checked: true,
+                        ..default()
+                    });
+                    menu.toggle_menu_item(ToggleMenuItemConfig {
+                        name: "Toggle item with trailing icon".into(),
+                        trailing_icon: IconData::Image(
+                            "embedded://sickle_ui/icons/tiles_menu.png".into(),
+                            Color::WHITE,
+                        ),
+                        ..default()
+                    });
+
+                    menu.separator();
+
+                    menu.submenu(
+                        SubmenuConfig {
+                            name: "Submenu".into(),
+                            ..default()
+                        },
+                        |submenu| {
+                            submenu.menu_item(MenuItemConfig {
+                                name: "Standard menu item".into(),
+                                ..default()
+                            });
+                            submenu.menu_item(MenuItemConfig {
+                                name: "Menu item with leading icon".into(),
+                                leading_icon: IconData::Image(
+                                    "embedded://sickle_ui/icons/details_menu.png".into(),
+                                    Color::WHITE,
+                                ),
+                                ..default()
+                            });
+                            submenu.menu_item(MenuItemConfig {
+                                name: "Menu item with trailing icon".into(),
+                                trailing_icon: IconData::Image(
+                                    "embedded://sickle_ui/icons/tiles_menu.png".into(),
+                                    Color::WHITE,
+                                ),
+                                ..default()
+                            });
+                        },
+                    );
+                },
+            );
+
+            bar.menu(
+                MenuConfig {
+                    name: "Test case".into(),
+                    alt_code: KeyCode::KeyS.into(),
+                    ..default()
+                },
+                |menu| {
+                    menu.menu_item(MenuItemConfig {
+                        name: "Standard menu item".into(),
+                        ..default()
+                    });
+                    menu.menu_item(MenuItemConfig {
+                        name: "Menu item with leading icon".into(),
+                        leading_icon: IconData::Image(
+                            "embedded://sickle_ui/icons/details_menu.png".into(),
+                            Color::WHITE,
+                        ),
+                        ..default()
+                    });
+                    menu.menu_item(MenuItemConfig {
+                        name: "Menu item with trailing icon".into(),
+                        trailing_icon: IconData::Image(
+                            "embedded://sickle_ui/icons/tiles_menu.png".into(),
+                            Color::WHITE,
+                        ),
+                        ..default()
+                    });
+
+                    menu.menu_item(MenuItemConfig {
+                        name: "Menu item with both icons".into(),
+                        leading_icon: IconData::Image(
+                            "embedded://sickle_ui/icons/details_menu.png".into(),
+                            Color::WHITE,
+                        ),
+                        trailing_icon: IconData::Image(
+                            "embedded://sickle_ui/icons/tiles_menu.png".into(),
+                            Color::WHITE,
+                        ),
+                        ..default()
+                    });
+
+                    menu.separator();
+
+                    menu.toggle_menu_item(ToggleMenuItemConfig {
+                        name: "Toggle item".into(),
+                        shortcut: vec![KeyCode::ControlLeft, KeyCode::KeyT].into(),
+                        ..default()
+                    });
+                    menu.toggle_menu_item(ToggleMenuItemConfig {
+                        name: "Already toggled item".into(),
+                        initially_checked: true,
+                        ..default()
+                    });
+                    menu.toggle_menu_item(ToggleMenuItemConfig {
+                        name: "Toggle item with trailing icon".into(),
+                        trailing_icon: IconData::Image(
+                            "embedded://sickle_ui/icons/tiles_menu.png".into(),
+                            Color::WHITE,
+                        ),
+                        ..default()
+                    });
+
+                    menu.separator();
+
+                    menu.submenu(
+                        SubmenuConfig {
+                            name: "Submenu".into(),
+                            ..default()
+                        },
+                        |submenu| {
+                            submenu.menu_item(MenuItemConfig {
+                                name: "Standard menu item".into(),
+                                ..default()
+                            });
+                            submenu.menu_item(MenuItemConfig {
+                                name: "Menu item with leading icon".into(),
+                                leading_icon: IconData::Image(
+                                    "embedded://sickle_ui/icons/details_menu.png".into(),
+                                    Color::WHITE,
+                                ),
+                                ..default()
+                            });
+                            submenu.menu_item(MenuItemConfig {
+                                name: "Menu item with trailing icon".into(),
+                                trailing_icon: IconData::Image(
+                                    "embedded://sickle_ui/icons/tiles_menu.png".into(),
+                                    Color::WHITE,
+                                ),
+                                ..default()
+                            });
+
+                            submenu.submenu(
+                                SubmenuConfig {
+                                    name: "Submenu with lead icon".into(),
+                                    leading_icon: IconData::Image(
+                                        "embedded://sickle_ui/icons/details_menu.png".into(),
+                                        Color::WHITE,
+                                    ),
+                                    ..default()
+                                },
+                                |submenu| {
+                                    submenu.menu_item(MenuItemConfig {
+                                        name: "Standard menu item".into(),
+                                        ..default()
+                                    });
+                                    submenu.menu_item(MenuItemConfig {
+                                        name: "Menu item with leading icon".into(),
+                                        leading_icon: IconData::Image(
+                                            "embedded://sickle_ui/icons/details_menu.png".into(),
+                                            Color::WHITE,
+                                        ),
+                                        ..default()
+                                    });
+                                    submenu.menu_item(MenuItemConfig {
+                                        name: "Menu item with trailing icon".into(),
+                                        trailing_icon: IconData::Image(
+                                            "embedded://sickle_ui/icons/tiles_menu.png".into(),
+                                            Color::WHITE,
+                                        ),
+                                        ..default()
+                                    });
+                                },
+                            );
+                        },
+                    );
+                },
+            );
+
+            bar.separator();
+
+            bar.extra_menu(|extra| {
+                extra
+                    .radio_group(vec!["Light", "Dark"], 1, false)
+                    .insert(ThemeSwitch);
+                extra
+                    .dropdown(vec!["Standard", "Medium Contrast", "High Contrast"], 0)
+                    .insert(ThemeContrastSelect)
+                    .style()
+                    .width(Val::Px(150.));
+            });
+        });
+
+        column
+            .row(|_| {})
+            .insert((ShowcaseContainer, UiContextRoot))
+            .style()
+            .height(Val::Percent(100.))
+            .background_color(Color::NONE);
     });
+
+    commands.next_state(Page::Layout);
 }
 
-pub fn exit_preview_mode(mut commands: Commands, preview: Res<PreviewEntities>) {
-    commands.entity(preview.camera).despawn();
-    // commands.add(DespawnViewRoot::new(preview.overlay));
-    commands.remove_resource::<PreviewEntities>()
-}
+pub fn exit_app_on_menu_item(
+    q_menu_items: Query<&MenuItem, (With<ExitAppButton>, Changed<MenuItem>)>,
+    q_windows: Query<Entity, With<Window>>,
+    mut commands: Commands,
+) {
+    let Ok(item) = q_menu_items.get_single() else {
+        return;
+    };
 
-/// Creates a colorful test pattern
-pub fn uv_debug_texture() -> Image {
-    const TEXTURE_SIZE: usize = 8;
-
-    let mut palette: [u8; 32] = [
-        255, 102, 159, 255, 255, 159, 102, 255, 236, 255, 102, 255, 121, 255, 102, 255, 102, 255,
-        198, 255, 102, 198, 255, 255, 121, 102, 255, 255, 236, 102, 255, 255,
-    ];
-
-    let mut texture_data = [0; TEXTURE_SIZE * TEXTURE_SIZE * 4];
-    for y in 0..TEXTURE_SIZE {
-        let offset = TEXTURE_SIZE * y * 4;
-        texture_data[offset..(offset + TEXTURE_SIZE * 4)].copy_from_slice(&palette);
-        palette.rotate_right(4);
-    }
-
-    Image::new_fill(
-        Extent3d {
-            width: TEXTURE_SIZE as u32,
-            height: TEXTURE_SIZE as u32,
-            depth_or_array_layers: 1,
-        },
-        TextureDimension::D2,
-        &texture_data,
-        TextureFormat::Rgba8UnormSrgb,
-        RenderAssetUsages::default(),
-    )
-}
-
-pub fn rotate(mut query: Query<&mut Transform, With<Shape>>, time: Res<Time>) {
-    for mut transform in &mut query {
-        transform.rotate_y(time.delta_seconds() / 2.);
+    if item.interacted() {
+        for entity in &q_windows {
+            commands.entity(entity).remove::<Window>();
+        }
     }
 }
 
-pub fn close_on_esc(input: Res<ButtonInput<KeyCode>>, mut exit: EventWriter<AppExit>) {
-    if input.just_pressed(KeyCode::Escape) {
-        exit.send(AppExit::Success);
+pub fn update_current_page(
+    mut next_state: ResMut<NextState<Page>>,
+    q_menu_items: Query<(&Page, &MenuItem), Changed<MenuItem>>,
+) {
+    for (menu_type, menu_item) in &q_menu_items {
+        if menu_item.interacted() {
+            next_state.set(*menu_type);
+        }
     }
+}
+
+pub fn clear_content_on_menu_change(
+    root_node: Query<Entity, With<ShowcaseContainer>>,
+    mut commands: Commands,
+) {
+    let root_entity = root_node.single();
+    commands.entity(root_entity).despawn_descendants();
+    commands.set_cursor(CursorIcon::Default);
+}
+
+pub fn spawn_hierarchy_view(
+    q_added_scene_view: Query<&SceneView, Added<SceneView>>,
+    q_hierarchy_panel: Query<Entity, With<HierarchyPanel>>,
+
+    mut commands: Commands,
+) {
+    for scene_view in &q_added_scene_view {
+        let Ok(container) = q_hierarchy_panel.get_single() else {
+            return;
+        };
+
+        commands.entity(container).despawn_descendants();
+        commands
+            .ui_builder(container)
+            .hierarchy_for(scene_view.asset_root());
+        break;
+    }
+}
+
+pub fn despawn_hierarchy_view(
+    q_hierarchy_panel: Query<Entity, With<HierarchyPanel>>,
+    q_removed_scene_view: RemovedComponents<SceneView>,
+    mut commands: Commands,
+) {
+    let Ok(container) = q_hierarchy_panel.get_single() else {
+        return;
+    };
+
+    if q_removed_scene_view.len() > 0 {
+        commands.entity(container).despawn_descendants();
+    }
+}
+
+pub fn layout_showcase(root_node: Query<Entity, With<ShowcaseContainer>>, mut commands: Commands) {
+    let root_entity = root_node.single();
+
+    commands
+        .ui_builder(root_entity)
+        .row(|row| {
+            row.docking_zone_split(
+                SizedZoneConfig {
+                    size: 75.,
+                    ..default()
+                },
+                |left_side| {
+                    left_side.docking_zone_split(
+                        SizedZoneConfig {
+                            size: 75.,
+                            ..default()
+                        },
+                        |left_side_top| {
+                            left_side_top.docking_zone(
+                                SizedZoneConfig {
+                                    size: 25.,
+                                    ..default()
+                                },
+                                true,
+                                |tab_container| {
+                                    tab_container.add_tab("Hierarchy".into(), |panel| {
+                                        panel.insert(HierarchyPanel);
+                                    });
+                                    tab_container.add_tab("Tab 3".into(), |panel| {
+                                        panel.label(LabelConfig {
+                                            label: "Panel 3".into(),
+                                            ..default()
+                                        });
+                                    });
+                                },
+                            );
+                            left_side_top.docking_zone(
+                                SizedZoneConfig {
+                                    size: 75.,
+                                    ..default()
+                                },
+                                false,
+                                |tab_container| {
+                                    tab_container.add_tab("Scene View".into(), |panel| {
+                                        panel.scene_view("examples/Low_poly_scene.gltf#Scene0");
+                                    });
+                                    tab_container.add_tab("Tab 2".into(), |panel| {
+                                        panel.label(LabelConfig {
+                                            label: "Panel 2".into(),
+                                            ..default()
+                                        });
+                                    });
+                                    tab_container.add_tab("Tab 3".into(), |panel| {
+                                        panel.label(LabelConfig {
+                                            label: "Panel 3".into(),
+                                            ..default()
+                                        });
+                                    });
+                                },
+                            );
+                        },
+                    );
+
+                    left_side.docking_zone(
+                        SizedZoneConfig {
+                            size: 25.,
+                            ..default()
+                        },
+                        true,
+                        |tab_container| {
+                            tab_container.add_tab("Systems".into(), |panel| {
+                                panel.label(LabelConfig {
+                                    label: "Systems".into(),
+                                    ..default()
+                                });
+                            });
+                            tab_container.add_tab("Tab 6".into(), |panel| {
+                                panel.label(LabelConfig {
+                                    label: "Panel 6".into(),
+                                    ..default()
+                                });
+                            });
+                        },
+                    );
+                },
+            );
+
+            row.docking_zone_split(
+                SizedZoneConfig {
+                    size: 25.,
+                    ..default()
+                },
+                |right_side| {
+                    right_side.docking_zone(
+                        SizedZoneConfig {
+                            size: 25.,
+                            ..default()
+                        },
+                        true,
+                        |tab_container| {
+                            tab_container.add_tab("Placeholder".into(), |placeholder| {
+                                placeholder.style().padding(UiRect::all(Val::Px(10.)));
+
+                                placeholder.row(|row| {
+                                    row.checkbox(None, false);
+                                    row.radio_group(vec!["Light", "Dark"], 1, false);
+                                });
+
+                                placeholder.row(|row| {
+                                    row.style().justify_content(JustifyContent::SpaceBetween);
+                                    row.dropdown(
+                                        vec![
+                                            "Standard",
+                                            "Medium Contrast",
+                                            "High Contrast - High Contrast",
+                                        ],
+                                        None,
+                                    );
+
+                                    row.dropdown(
+                                        vec![
+                                            "Standard",
+                                            "Medium Contrast",
+                                            "High Contrast - High Contrast",
+                                        ],
+                                        None,
+                                    );
+                                });
+
+                                placeholder.outlined_block();
+                                placeholder.atlas_example();
+
+                                placeholder.row(|row| {
+                                    row.style().justify_content(JustifyContent::SpaceBetween);
+                                    row.dropdown(
+                                        vec![
+                                            "Standard",
+                                            "Medium Contrast",
+                                            "High Contrast - High Contrast",
+                                        ],
+                                        None,
+                                    );
+                                    row.checkbox(None, false);
+                                    row.dropdown(
+                                        vec![
+                                            "Standard",
+                                            "Medium Contrast",
+                                            "High Contrast - High Contrast",
+                                        ],
+                                        None,
+                                    );
+                                });
+                            });
+
+                            tab_container.add_tab("Sliders".into(), |slider_tab| {
+                                slider_tab
+                                    .row(|row| {
+                                        row.slider(SliderConfig::vertical(
+                                            String::from("Slider"),
+                                            0.,
+                                            5.,
+                                            2.,
+                                            true,
+                                        ));
+
+                                        row.slider(SliderConfig::vertical(None, 0., 5., 2., true));
+
+                                        row.slider(SliderConfig::vertical(
+                                            String::from("Slider"),
+                                            0.,
+                                            5.,
+                                            2.,
+                                            false,
+                                        ));
+
+                                        row.slider(SliderConfig::vertical(None, 0., 5., 2., false));
+                                    })
+                                    .style()
+                                    .height(Val::Percent(50.));
+
+                                slider_tab
+                                    .column(|row| {
+                                        row.slider(SliderConfig::horizontal(
+                                            String::from("Slider"),
+                                            0.,
+                                            5.,
+                                            2.,
+                                            true,
+                                        ));
+                                        row.slider(SliderConfig::horizontal(
+                                            None, 0., 5., 2., true,
+                                        ));
+                                        row.slider(SliderConfig::horizontal(
+                                            String::from("Slider"),
+                                            0.,
+                                            5.,
+                                            2.,
+                                            false,
+                                        ));
+                                        row.slider(SliderConfig::horizontal(
+                                            None, 0., 5., 2., false,
+                                        ));
+                                    })
+                                    .style()
+                                    .justify_content(JustifyContent::End)
+                                    .height(Val::Percent(50.))
+                                    .width(Val::Percent(100.));
+                            });
+                        },
+                    );
+                },
+            );
+        })
+        .style()
+        .height(Val::Percent(100.));
+}
+
+pub fn interaction_showcase(
+    root_node: Query<Entity, With<ShowcaseContainer>>,
+    mut commands: Commands,
+) {
+    let root_entity = root_node.single();
+
+    commands.ui_builder(root_entity).column(|_column| {
+        // Test here simply by calling methods on the `column`
+    });
 }
