@@ -12,7 +12,11 @@ use sickle_ui::{
 
 #[cfg(feature = "editor")]
 use sickle_ui::SickleUiPlugin;
-use systems::{clear_content_on_menu_change, despawn_hierarchy_view, exit_app_on_menu_item, handle_theme_contrast_select, handle_theme_data_update, handle_theme_switch, interaction_showcase, layout_showcase, setup, spawn_hierarchy_view, update_current_page};
+use systems::{
+    clear_content_on_menu_change, despawn_hierarchy_view, exit_app_on_menu_item,
+    handle_theme_contrast_select, handle_theme_data_update, handle_theme_switch,
+    interaction_showcase, layout_showcase, setup, spawn_hierarchy_view, update_current_page,
+};
 
 pub struct EditorPlugin;
 
@@ -22,45 +26,44 @@ pub mod systems;
 
 impl Plugin for EditorPlugin {
     fn build(&self, app: &mut App) {
-        #[cfg(feature = "editor")]
-        app.add_plugins(SickleUiPlugin)
-            .add_plugins(UiFooterRootNodePlugin)
-            .add_plugins(OutlinedBlockPlugin)
-            .add_plugins(TextureAtlasInteractionPlugin)
-            .init_resource::<CurrentPage>()
-            .init_state::<Page>()
-            .add_plugins(HierarchyTreeViewPlugin)
-            .add_plugins(SceneViewPlugin)
-            .add_systems(Startup, setup.in_set(UiStartupSet))
-            .add_systems(OnEnter(Page::Layout), layout_showcase)
-            .add_systems(OnExit(Page::Layout), clear_content_on_menu_change)
-            .add_systems(OnEnter(Page::Playground), interaction_showcase)
-            .add_systems(OnExit(Page::Playground), clear_content_on_menu_change)
-            .add_systems(PreUpdate, exit_app_on_menu_item)
-            .add_systems(
-                PreUpdate,
-                (spawn_hierarchy_view, despawn_hierarchy_view).after(SpawnSceneViewPreUpdate),
+        app.add_plugins((
+            SickleUiPlugin,
+            TextureAtlasInteractionPlugin,
+            OutlinedBlockPlugin,
+            UiFooterRootNodePlugin,
+            HierarchyTreeViewPlugin,
+        ))
+        .init_resource::<CurrentPage>()
+        .init_state::<Page>()
+        .add_plugins()
+        .add_plugins(SceneViewPlugin)
+        .add_systems(Startup, setup.in_set(UiStartupSet))
+        .add_systems(OnEnter(Page::Layout), layout_showcase)
+        .add_systems(OnExit(Page::Layout), clear_content_on_menu_change)
+        .add_systems(OnEnter(Page::Playground), interaction_showcase)
+        .add_systems(OnExit(Page::Playground), clear_content_on_menu_change)
+        .add_systems(PreUpdate, exit_app_on_menu_item)
+        .add_systems(
+            PreUpdate,
+            (spawn_hierarchy_view, despawn_hierarchy_view).after(SpawnSceneViewPreUpdate),
+        )
+        .add_systems(
+            Update,
+            (
+                update_current_page,
+                handle_theme_data_update,
+                handle_theme_switch,
+                handle_theme_contrast_select,
             )
-            .add_systems(
-                Update,
-                (
-                    update_current_page,
-                    handle_theme_data_update,
-                    handle_theme_switch,
-                    handle_theme_contrast_select,
-                )
-                    .chain()
-                    .after(WidgetLibraryUpdate),
-            );
+                .chain()
+                .after(WidgetLibraryUpdate),
+        );
     }
 }
-
 
 #[derive(SystemSet, Clone, Hash, Debug, Eq, PartialEq)]
 pub struct UiStartupSet;
 
-
-// Example themed widgets, generated with snipped
 pub struct UiFooterRootNodePlugin;
 
 impl Plugin for UiFooterRootNodePlugin {
@@ -95,7 +98,6 @@ impl Plugin for OutlinedBlockPlugin {
         app.add_plugins(ComponentThemePlugin::<OutlinedBlock>::default());
     }
 }
-
 
 pub trait UiOutlinedBlockExt {
     fn outlined_block(&mut self) -> UiBuilder<Entity>;

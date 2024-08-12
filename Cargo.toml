@@ -11,7 +11,6 @@ keywords = ["bevy"]
 publish = true
 
 [dependencies]
-async-executor = "1.12.0"
 bevy = { version = "0.14.1", default-features = false, features = [
     "bevy_asset",         # Assets management
     "bevy_scene",         # Scenes management
@@ -21,18 +20,29 @@ bevy = { version = "0.14.1", default-features = false, features = [
     "bevy_gltf",          # GLTF 3D assets format support
     "asset_processor",    # Asset processing
 ] }
+async-executor = "1.12.0"
 avian3d = "0.1.0"
-vleue_navigator = "0.8.0-rc.3"
+vleue_navigator = "0.8.0"
+cfg-if = "1.0.0"
+leafwing_manifest = "0.2"
+clap = "4.5.*"
+bevy_ggrs = { version = "0.16.0", optional = true }
+bitflags = { version = "2.5.0", optional = true }
+bytemuck = { version = "1.16.0", optional = true }
+serde = { version = "1.0.*", features = ["derive"], optional = true }
 bevy_registry_export = { version = "0.3.1", optional = true }
 bevy_panorbit_camera = { version = "0.19.1", optional = true }
 bevy_gltf_components = { version = "0.5.1", optional = true }
 bevy_gltf_blueprints = { version = "0.10.2", optional = true }
 bevy_gltf_save_load = { version = "0.4.1", optional = true }
-cfg-if = "1.0.0"
 sickle_ui = { version = "0.2.1", optional = true }
+baby_shark = { version = "0.3.3", optional = true }
+stl_io = { version = "0.7.0", optional = true }
+image = { version = "0.25.*", optional = true }
 
 [features]
 default = []
+netcode = ["dep:bytemuck", "dep:serde", "dep:bevy_ggrs"]
 editor = [
     "dep:sickle_ui",
     "dep:bevy_registry_export",
@@ -41,4 +51,5 @@ editor = [
     "dep:bevy_gltf_blueprints",
     "dep:bevy_gltf_save_load",
 ]
+proc_terrain = ["dep:baby_shark", "dep:image"]
 debug = []

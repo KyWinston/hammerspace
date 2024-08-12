@@ -136,7 +136,6 @@ pub fn setup(mut commands: Commands) {
         ))
         .id();
 
-    // Use the UI builder with plain bundles and direct setting of bundle props
     let mut root_entity = Entity::PLACEHOLDER;
     commands
         .ui_builder(UiRoot)
@@ -590,7 +589,7 @@ pub fn layout_showcase(root_node: Query<Entity, With<ShowcaseContainer>>, mut co
                                 false,
                                 |tab_container| {
                                     tab_container.add_tab("Scene View".into(), |panel| {
-                                        panel.scene_view("examples/Low_poly_scene.gltf#Scene0");
+                                        panel.scene_view("levels/derelict_district.gltf#Scene0");
                                     });
                                     tab_container.add_tab("Tab 2".into(), |panel| {
                                         panel.label(LabelConfig {
