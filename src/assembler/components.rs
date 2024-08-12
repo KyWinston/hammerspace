@@ -1,4 +1,3 @@
-use avian3d::prelude::{Collider, RigidBody};
 use bevy::prelude::*;
 
 #[derive(Component)]
@@ -6,39 +5,33 @@ pub struct MaterialPending;
 
 #[derive(Component)]
 pub struct SfxEmitter {
-   pub sound: String,
-   pub intensity: f32,
-   pub looped: bool,
+    pub sound: String,
+    pub intensity: f32,
+    pub looped: bool,
 }
 
 #[derive(Component)]
-pub struct Setpiece;
+pub struct Setpiece {
+    pub dynamic: bool,
+}
 
 #[derive(Bundle)]
 pub struct PrefabBundle {
     rendered_mesh: PbrBundle,
-    collider: Collider,
-    rigid_body_type: RigidBody,
+    collision_mesh: Handle<Mesh>,
     setpiece: Setpiece,
 }
 
 impl PrefabBundle {
-    pub fn new(
-        rigid_body_type: RigidBody,
-        mesh: Handle<Mesh>,
-        verts: Vec<Vec3>,
-        indices: Vec<[u32; 3]>,
-        material: Handle<StandardMaterial>,
-    ) -> Self {
+    pub fn new(dynamic: bool, mesh: Handle<Mesh>, material: Handle<StandardMaterial>) -> Self {
         Self {
             rendered_mesh: PbrBundle {
-                mesh,
+                mesh: mesh.clone(),
                 material,
                 ..default()
             },
-            collider: Collider::trimesh(verts, indices),
-            rigid_body_type,
-            setpiece: Setpiece,
+            collision_mesh: mesh,
+            setpiece: Setpiece { dynamic },
         }
     }
 }

@@ -1,4 +1,0 @@
-Settings(
-   local_port: 8080,
-   players: ["localhost"]
-)

@@ -11,7 +11,8 @@ pub struct LoaderPlugin;
 
 impl Plugin for LoaderPlugin {
     fn build(&self, app: &mut App) {
-        app.add_event::<LoadLevelEvent>()
+        app.init_state::<AssetLoadState>()
+            .add_event::<LoadLevelEvent>()
             .init_resource::<ImageAssets>()
             .init_resource::<MeshAssets>()
             .add_systems(OnEnter(AssetLoadState::Initializing), init_resources)

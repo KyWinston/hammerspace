@@ -24,8 +24,11 @@ pub fn init_resources(
     mut commands: Commands,
     mut mesh_assets: ResMut<MeshAssets>,
     mut image_assets: ResMut<ImageAssets>,
+    // mut asset_state_next: ResMut<NextState<AssetLoadState>>,
     server: Res<AssetServer>,
 ) {
+    info!("initializing resources");
+    info!("initializing sprites");
     //sprite_sheets
     image_assets.0.extend(
         ([
@@ -41,7 +44,7 @@ pub fn init_resources(
             )
         }),
     );
-
+    info!("initializing images");
     //still images
     image_assets.0.extend(
         ([
@@ -54,6 +57,8 @@ pub fn init_resources(
         .into_iter())
         .map(|f| (f[0].to_string(), server.load(f[1].to_owned() + ".png"))),
     );
+
+    info!("initializing meshes");
 
     //meshes
     mesh_assets
@@ -75,19 +80,21 @@ pub fn init_resources(
     }
     commands.insert_resource(ImageAssetsLoading(loading_images));
     commands.insert_resource(MeshAssetsLoading(loading_meshes));
+    // asset_state_next.set(AssetLoadState::Loading);
 }
 
 pub fn check_assets_ready(
     mut commands: Commands,
     mut asset_state_next: ResMut<NextState<AssetLoadState>>,
     server: Res<AssetServer>,
-    // images: Res<ImageAssets>,
+    _images: Res<ImageAssets>,
     image_assets_loading: Res<ImageAssetsLoading>,
     mesh_assets_loading: Res<MeshAssetsLoading>,
 ) {
+    info!("checking assets");
     let mut not_loaded_count: i64 = 0;
     let mut load_failure = false;
-
+    info!("checking images");
     for image_handle in &image_assets_loading.0 {
         match server.get_load_state(&image_handle.clone()).unwrap() {
             bevy::asset::LoadState::Failed(_) => {
@@ -100,7 +107,7 @@ pub fn check_assets_ready(
             }
         }
     }
-
+    info!("checking meshes");
     for mesh_and_scene in &mesh_assets_loading.0 {
         match server.get_load_state(&mesh_and_scene.clone()).unwrap() {
             bevy::asset::LoadState::Failed(_) => {
@@ -129,7 +136,7 @@ pub fn check_assets_ready(
     if is_loaded_without_failure == AssetLoadState::Loaded {
         commands.remove_resource::<ImageAssetsLoading>();
         commands.remove_resource::<MeshAssetsLoading>();
-
+        info!("resolving load");
         asset_state_next.set(is_loaded_without_failure);
     }
 }
