@@ -5,6 +5,8 @@ use bevy::{
     render::mesh::Indices,
 };
 
+use super::{components::SfxEmitter, resources::MeshAssets};
+
 pub fn assemble_collider(
     gltf: &Gltf,
     gltf_nodes: &Res<Assets<GltfNode>>,
@@ -90,3 +92,44 @@ fn build_colliders(prim_mesh: Mesh) -> (Vec<Vec3>, Vec<[u32; 3]>) {
     }
     (vertices, indices)
 }
+
+pub fn setup_level(
+    mut commands: Commands,
+    mesh_assets: ResMut<MeshAssets>,
+    gltfs: Res<Assets<Gltf>>,
+    _gltf_nodes: Res<Assets<GltfNode>>,
+    _gltf_meshes: Res<Assets<GltfMesh>>,
+    _meshes: Res<Assets<Mesh>>,
+) {
+    let mut objects_to_spawn: Vec<(String, Transform)> = Vec::new();
+
+    objects_to_spawn.push((
+        "furnace".to_string(),
+        Transform::from_xyz(0.0, -1.5, -2.0).with_scale(Vec3::from_array([2.0, 2.0, 2.0])),
+    ));
+
+    for object_to_spawn in objects_to_spawn {
+        let gltf = gltfs
+            .get(mesh_assets.0.get(&object_to_spawn.0).unwrap())
+            .unwrap();
+        commands.spawn(DirectionalLightBundle::default());
+        let mut obj = commands.spawn(SceneBundle {
+            scene: gltf
+                .default_scene
+                .clone()
+                .expect("Default scene not found for loaded gltf."),
+            transform: object_to_spawn.1,
+            ..default()
+        });
+        if object_to_spawn.0 == "furnace" {
+            obj.insert(SfxEmitter {
+                sound: "thrusterFire_000.ogg".into(),
+                intensity: 1.0,
+                looped: true,
+            });
+        }
+        // .insert(assemble_collider(gltf, &gltf_nodes, &meshes, &gltf_meshes,false));
+    }
+}
+
+
