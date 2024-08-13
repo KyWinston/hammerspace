@@ -26,7 +26,7 @@ impl Plugin for LoaderPlugin {
     }
 }
 
-#[derive(States, Default, Debug, Hash, PartialEq, Eq, Clone)]
+#[derive(PartialEq, Eq, Debug, Hash, Clone, Copy, Default, States)]
 pub enum AssetLoadState {
     #[default]
     Initializing,

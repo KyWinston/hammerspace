@@ -1,8 +1,4 @@
-use bevy::{
-    gltf::{Gltf, GltfMesh, GltfNode},
-    prelude::*,
-    render::mesh::Indices,
-};
+use bevy::{gltf::Gltf, prelude::*, render::mesh::Indices};
 
 use super::{components::SfxEmitter, resources::MeshAssets};
 
@@ -36,9 +32,9 @@ pub fn setup_level(
     mut commands: Commands,
     mesh_assets: ResMut<MeshAssets>,
     gltfs: Res<Assets<Gltf>>,
-    gltf_nodes: Res<Assets<GltfNode>>,
-    gltf_meshes: Res<Assets<GltfMesh>>,
-    meshes: Res<Assets<Mesh>>,
+    // gltf_nodes: Res<Assets<GltfNode>>,
+    // gltf_meshes: Res<Assets<GltfMesh>>,
+    // meshes: Res<Assets<Mesh>>,
 ) {
     info!("setting up level");
     let mut objects_to_spawn: Vec<(String, Transform)> = Vec::new();

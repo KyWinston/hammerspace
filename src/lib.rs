@@ -4,6 +4,7 @@ use bevy::prelude::*;
 #[cfg(feature = "editor")]
 use editor::EditorPlugin;
 
+
 use pathfind::{events::PathEvent, PathFindPlugin};
 use resources::LevelFolder;
 
