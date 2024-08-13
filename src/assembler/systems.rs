@@ -36,9 +36,9 @@ pub fn setup_level(
     mut commands: Commands,
     mesh_assets: ResMut<MeshAssets>,
     gltfs: Res<Assets<Gltf>>,
-    _gltf_nodes: Res<Assets<GltfNode>>,
-    _gltf_meshes: Res<Assets<GltfMesh>>,
-    _meshes: Res<Assets<Mesh>>,
+    gltf_nodes: Res<Assets<GltfNode>>,
+    gltf_meshes: Res<Assets<GltfMesh>>,
+    meshes: Res<Assets<Mesh>>,
 ) {
     info!("setting up level");
     let mut objects_to_spawn: Vec<(String, Transform)> = Vec::new();

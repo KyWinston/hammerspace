@@ -17,6 +17,7 @@ bevy = { version = "0.14.1", default-features = false, features = [
     "bevy_state",
     "bevy_core_pipeline",
     "bevy_gltf",          # GLTF 3D assets format support
+    "tonemapping_luts"
     "asset_processor",    # Asset processing
 ] }
 async-executor = "1.12.0"

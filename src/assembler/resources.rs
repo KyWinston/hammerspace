@@ -24,7 +24,6 @@ pub fn init_resources(
     mut commands: Commands,
     mut mesh_assets: ResMut<MeshAssets>,
     mut image_assets: ResMut<ImageAssets>,
-    // mut asset_state_next: ResMut<NextState<AssetLoadState>>,
     server: Res<AssetServer>,
 ) {
     info!("initializing resources");
@@ -48,19 +47,17 @@ pub fn init_resources(
     //still images
     image_assets.0.extend(
         ([
-            ["character", "images/character_temp"],
             ["grunge", "textures/brush_grunge"],
             ["grunge_normal", "textures/brush_grunge_normal"],
-            ["terrain_hex", "images/terrain/hexagon_test"],
-            ["terrain_flat", "images/terrain/hexagon_flat"],
         ]
         .into_iter())
         .map(|f| (f[0].to_string(), server.load(f[1].to_owned() + ".png"))),
     );
 
-    info!("initializing meshes");
+    mesh_assets.0.insert("level".to_string(),server.load("levels/derelict_district.gltf"));
 
     //meshes
+    info!("initializing meshes");
     mesh_assets
         .0
         .insert("furnace".to_string(), server.load("objects/furnace.gltf"));
@@ -80,7 +77,6 @@ pub fn init_resources(
     }
     commands.insert_resource(ImageAssetsLoading(loading_images));
     commands.insert_resource(MeshAssetsLoading(loading_meshes));
-    // asset_state_next.set(AssetLoadState::Loading);
 }
 
 pub fn check_assets_ready(
