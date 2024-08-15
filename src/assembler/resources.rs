@@ -31,7 +31,6 @@ pub fn init_resources(
     //sprite_sheets
     image_assets.0.extend(
         ([
-            // ("snail_red", "snail_red"),
             ("mask", "sprites/warrior/idle/idle_full"),
             ("uv_color", "sprites/warrior/uv_canvas"),
         ]
@@ -54,9 +53,11 @@ pub fn init_resources(
         .map(|f| (f[0].to_string(), server.load(f[1].to_owned() + ".png"))),
     );
 
-    mesh_assets.0.insert("level".to_string(),server.load("levels/derelict_district.gltf"));
-
     //meshes
+    mesh_assets.0.insert(
+        "level".to_string(),
+        server.load("levels/concrete_island.gltf"),
+    );
     info!("initializing meshes");
     mesh_assets
         .0

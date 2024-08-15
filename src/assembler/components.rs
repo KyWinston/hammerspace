@@ -15,6 +15,9 @@ pub struct Setpiece {
     pub dynamic: bool,
 }
 
+#[derive(Component)]
+pub struct LevelTerrain;
+
 #[derive(Bundle)]
 pub struct PrefabBundle {
     rendered_mesh: PbrBundle,
