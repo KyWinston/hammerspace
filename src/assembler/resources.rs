@@ -61,7 +61,7 @@ pub fn init_resources(
     info!("initializing meshes");
     mesh_assets
         .0
-        .insert("furnace".to_string(), server.load("objects/furnace.gltf"));
+        .insert("Furnace".to_string(), server.load("objects/furnace.gltf"));
     mesh_assets
         .0
         .insert("monster_bed".to_string(), server.load("objects/bed.gltf"));
@@ -137,3 +137,12 @@ pub fn check_assets_ready(
         asset_state_next.set(is_loaded_without_failure);
     }
 }
+
+// pub fn substitute_prefab(
+//     prefab: (String, Mesh),
+//     gltf: Res<MeshAssets>,
+//     mut meshes: ResMut<Assets<Mesh>>,
+// ) -> Handle<Mesh> {
+
+//     meshes.add(prefab.1)
+// }
