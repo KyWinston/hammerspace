@@ -6,7 +6,7 @@ use crate::assembler::components::LevelTerrain;
 pub fn build_collider(prim_mesh: Mesh) -> (Vec<Vec3>, Vec<[u32; 3]>) {
     let (vert_buffer, idx_buffer) = (prim_mesh.attributes(), prim_mesh.indices().unwrap());
     let mut vertices: Vec<Vec3> = vec![];
-    for (_, verts) in vert_buffer.into_iter().enumerate() {
+    for verts in vert_buffer.into_iter() {
         if let Some(verts) = verts.1.as_float3() {
             for vert in verts {
                 vertices.push(Vec3::new(vert[0], vert[1], vert[2]));
@@ -16,12 +16,12 @@ pub fn build_collider(prim_mesh: Mesh) -> (Vec<Vec3>, Vec<[u32; 3]>) {
     let mut indices: Vec<[u32; 3]> = vec![];
     match idx_buffer {
         Indices::U32(x) => {
-            for (_, iter) in x.chunks(3).enumerate() {
+            for iter in x.chunks(3) {
                 indices.push(iter.try_into().unwrap());
             }
         }
         Indices::U16(x) => {
-            for (_, iter) in x.chunks(3).enumerate() {
+            for iter in x.chunks(3) {
                 indices.push([iter[0] as u32, iter[1] as u32, iter[2] as u32]);
             }
         }
@@ -38,12 +38,10 @@ pub fn setup_level(
     gltf_mesh: Res<Assets<GltfMesh>>,
 ) {
     info!("setting up level");
-    let mut objects_to_spawn: Vec<(String, Transform)> = Vec::new();
-
-    objects_to_spawn.push((
+    let objects_to_spawn = vec![(
         "level".to_string(),
         Transform::from_xyz(0.0, 0.0, 0.0).with_scale(Vec3::from_array([1.0, 1.0, 1.0])),
-    ));
+    )];
 
     commands.spawn(DirectionalLightBundle::default());
 
@@ -64,13 +62,15 @@ pub fn setup_level(
             }
             for ex_node in gltf.nodes.clone() {
                 let node = nodes.get(ex_node.id());
-                if node.is_some() && node.unwrap().name.contains("Light") {
-                    commands.spawn(PointLightBundle {
-                        point_light: PointLight::default(),
-                        transform: node.unwrap().transform,
-                        global_transform: node.unwrap().transform.into(),
-                        ..default()
-                    });
+                if let Some(node) = node {
+                    if node.name.contains("Light") {
+                        commands.spawn(PointLightBundle {
+                            point_light: PointLight::default(),
+                            transform: node.transform,
+                            global_transform: node.transform.into(),
+                            ..default()
+                        });
+                    }
                 }
             }
         }
@@ -88,13 +88,13 @@ fn unpack_gltf(
     let mut unpacked_gltf = vec![];
     for mesh in gltf.nodes.clone().into_iter() {
         if let Some(node_data) = nodes.get(mesh.id()) {
-            if !node_data.mesh.is_some() {
+            if node_data.mesh.is_none() {
                 continue;
             } else {
                 let prim = node_data.mesh.clone().unwrap();
                 let prefab_replacement =
-                    substitute_prefab(&node_data.name, gltfs, &prim, &mesh_assets);
-                let replacement_prim = gltf_mesh.get(prefab_replacement.id()).unwrap(); 
+                    substitute_prefab(&node_data.name, gltfs, &prim, mesh_assets);
+                let replacement_prim = gltf_mesh.get(prefab_replacement.id()).unwrap();
                 info!("{:?}", replacement_prim.name);
                 unpacked_gltf.push((
                     MaterialMeshBundle {

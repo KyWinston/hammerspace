@@ -2224,6 +2224,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "cargo-husky"
+version = "1.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7b02b629252fe8ef6460461409564e2c21d0c8e77e0944f3d189ff06c4e932ad"
+
+[[package]]
 name = "cc"
 version = "1.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3226,7 +3232,7 @@ dependencies = [
 
 [[package]]
 name = "hammerspace"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "baby_shark",
  "bevy 0.14.1",
@@ -3236,6 +3242,7 @@ dependencies = [
  "bevy_panorbit_camera",
  "bevy_registry_export",
  "bitflags 2.6.0",
+ "cargo-husky",
  "cfg-if",
  "clap",
  "image 0.25.2",
