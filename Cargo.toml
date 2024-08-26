@@ -3,7 +3,7 @@
 name = "hammerspace"
 description = "A plugin for the loading and management of levels and scenes, and their physical properties"
 repository = "https://github.com/KyWinston/hammerspace"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["Ky Winston<kwinston@proton.me>"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
