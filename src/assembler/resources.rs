@@ -31,7 +31,7 @@ pub fn init_resources(
     //sprite_sheets
     image_assets.0.extend(
         ([
-            ("mask", "sprites/warrior/full_sheet"),
+            ("mask", "sprites/warrior/uv_sheet"),
             ("uv_color", "sprites/warrior/uv_canvas"),
         ]
         .into_iter())
