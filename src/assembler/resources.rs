@@ -32,9 +32,10 @@ pub fn init_resources(
     image_assets.0.extend(
         ([
             ("mask", "sprites/warrior/uv_sheet"),
+            ("normals", "sprites/warrior/normal_sheet"),
             ("uv_color", "sprites/warrior/uv_canvas"),
-        ]
-        .into_iter())
+
+        ])
         .map(|f| {
             (
                 f.0.to_string(),
