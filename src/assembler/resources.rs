@@ -32,7 +32,8 @@ pub fn init_resources(
     image_assets.0.extend(
         ([
             ("mask", "sprites/warrior/uv_sheet"),
-            ("normals", "sprites/warrior/normal_sheet"),
+            ("normals", "sprites/warrior/normal_sheet_t"),
+            ("occlusion", "sprites/warrior/occlusion"),
             ("uv_color", "sprites/warrior/uv_canvas"),
 
         ])
