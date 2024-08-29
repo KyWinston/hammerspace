@@ -34,6 +34,7 @@ pub fn init_resources(
             ("mask", "sprites/warrior/uv_sheet"),
             ("normals", "sprites/warrior/normal_sheet_t"),
             ("occlusion", "sprites/warrior/occlusion"),
+            ("volume", "sprites/warrior/volume"),
             ("uv_color", "sprites/warrior/uv_canvas"),
 
         ])
