@@ -2,9 +2,6 @@ use super::AssetLoadState;
 use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
 
 #[derive(Resource)]
-pub struct NextLevel(pub Handle<Gltf>);
-
-#[derive(Resource)]
 pub struct LoadingTextures(pub Vec<Handle<Image>>);
 
 #[derive(Resource)]
@@ -18,15 +15,15 @@ pub struct SessionAssets(
 pub struct ImageAssets(pub HashMap<String, Handle<Image>>);
 
 #[derive(Resource, Default)]
-pub struct MeshAssets(pub HashMap<String, Handle<Gltf>>);
+pub(crate) struct MeshAssets(pub HashMap<String, Handle<Gltf>>);
 
 #[derive(Resource, Default)]
-pub struct ImageAssetsLoading(pub Vec<Handle<Image>>);
+pub(crate) struct ImageAssetsLoading(pub Vec<Handle<Image>>);
 
 #[derive(Resource, Default)]
-pub struct MeshAssetsLoading(pub Vec<Handle<Gltf>>);
+pub(crate) struct MeshAssetsLoading(pub Vec<Handle<Gltf>>);
 
-pub fn init_resources(
+pub(crate) fn init_resources(
     mut commands: Commands,
     session_assets: Res<SessionAssets>,
     mut mesh_assets: ResMut<MeshAssets>,
@@ -83,7 +80,7 @@ pub fn init_resources(
     commands.insert_resource(MeshAssetsLoading(loading_meshes));
 }
 
-pub fn check_assets_ready(
+pub(crate) fn check_assets_ready(
     mut commands: Commands,
     mut asset_state_next: ResMut<NextState<AssetLoadState>>,
     server: Res<AssetServer>,

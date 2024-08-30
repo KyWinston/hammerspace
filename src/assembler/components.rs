@@ -3,12 +3,12 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct MaterialPending;
 
-#[derive(Component)]
-pub struct SfxEmitter {
-    pub sound: String,
-    pub intensity: f32,
-    pub looped: bool,
-}
+// #[derive(Component)]
+// pub(crate) struct SfxEmitter {
+//     pub sound: String,
+//     pub intensity: f32,
+//     pub looped: bool,
+// }
 
 #[derive(Component)]
 pub struct Setpiece {
