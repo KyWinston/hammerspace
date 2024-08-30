@@ -3000,7 +3000,7 @@ dependencies = [
 
 [[package]]
 name = "hammerspace"
-version = "0.2.3"
+version = "0.2.4"
 dependencies = [
  "baby_shark",
  "bevy 0.14.1",

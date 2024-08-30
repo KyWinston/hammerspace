@@ -29,7 +29,7 @@ pub fn build_collider(prim_mesh: Mesh) -> (Vec<Vec3>, Vec<[u32; 3]>) {
     (vertices, indices)
 }
 
-pub fn setup_level(
+pub(crate) fn setup_level(
     mut commands: Commands,
     mut materials: ResMut<Assets<StandardMaterial>>,
     mesh_assets: Res<MeshAssets>,

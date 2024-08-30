@@ -20,8 +20,8 @@ bevy = { version = "0.14.1", default-features = false, features = [
     "asset_processor",
 ] }
 serde = "1.0.195"
-vleue_navigator = "0.8.0"
 cfg-if = "1.0.0"
+vleue_navigator = { version = "0.8.0", optional = true }
 clap = { version = "4.5.*", optional = true }
 bitflags = { version = "2.5.0", optional = true }
 bevy_registry_export = { version = "0.3.1", optional = true }
@@ -52,6 +52,7 @@ editor = [
     "dep:bevy_gltf_save_load",
     "dep:clap",
 ]
+pathfind = ["dep:vleue_navigator"]
 proc_terrain = ["dep:baby_shark", "dep:image", "dep:stl_io"]
 debug = []
 
