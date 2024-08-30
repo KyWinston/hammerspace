@@ -1,12 +1,18 @@
-use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
-
 use super::AssetLoadState;
+use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
 
 #[derive(Resource)]
 pub struct NextLevel(pub Handle<Gltf>);
 
 #[derive(Resource)]
 pub struct LoadingTextures(pub Vec<Handle<Image>>);
+
+#[derive(Resource)]
+pub struct SessionAssets(
+    pub HashMap<String, String>,
+    pub HashMap<String, String>,
+    pub HashMap<String, String>,
+);
 
 #[derive(Resource, Default)]
 pub struct ImageAssets(pub HashMap<String, Handle<Image>>);
@@ -22,52 +28,46 @@ pub struct MeshAssetsLoading(pub Vec<Handle<Gltf>>);
 
 pub fn init_resources(
     mut commands: Commands,
+    session_assets: Res<SessionAssets>,
     mut mesh_assets: ResMut<MeshAssets>,
     mut image_assets: ResMut<ImageAssets>,
     server: Res<AssetServer>,
 ) {
     info!("initializing resources");
     info!("initializing sprites");
-    //sprite_sheets
-    image_assets.0.extend(
-        ([
-            ("mask", "sprites/warrior/uv_sheet"),
-            ("normals", "sprites/warrior/normal_sheet_t"),
-            ("occlusion", "sprites/warrior/occlusion"),
-            ("volume", "sprites/warrior/volume"),
-            ("uv_color", "sprites/warrior/uv_canvas"),
 
-        ])
-        .map(|f| {
+    for map in [
+        ["uv_color", "uv_canvas"],
+        ["occlusion", "occlusion"],
+        ["normals", "normal_sheet"],
+        ["mask", "uv_sheet"],
+        ["volume", "volume"],
+    ] {
+        //sprite_sheets
+        image_assets.0.extend(session_assets.0.iter().map(|f| {
             (
-                f.0.to_string(),
-                server.load("images/".to_owned() + f.1 + ".png"),
+                map[0].to_string(),
+                server.load("images/sprites/".to_owned() + f.1 + "/" + map[1] + ".png"),
             )
-        }),
-    );
+        }));
+    }
     info!("initializing images");
+
     //still images
-    image_assets.0.extend(
-        ([
-            ["grunge", "textures/brush_grunge"],
-            ["grunge_normal", "textures/brush_grunge_normal"],
-        ]
-        .into_iter())
-        .map(|f| (f[0].to_string(), server.load(f[1].to_owned() + ".png"))),
-    );
+    image_assets.0.extend(session_assets.1.iter().map(|f| {
+        (
+            f.0.to_string(),
+            server.load("images/".to_owned() + f.1 + ".png"),
+        )
+    }));
 
     //meshes
-    mesh_assets.0.insert(
-        "level".to_string(),
-        server.load("levels/concrete_island.gltf"),
+    mesh_assets.0.extend(
+        session_assets
+            .2
+            .iter()
+            .map(|f| (f.0.to_string(), server.load(f.1.to_string() + ".gltf"))),
     );
-    info!("initializing meshes");
-    mesh_assets
-        .0
-        .insert("Furnace".to_string(), server.load("objects/furnace.gltf"));
-    mesh_assets
-        .0
-        .insert("monster_bed".to_string(), server.load("objects/bed.gltf"));
 
     let mut loading_images = Vec::new();
     let mut loading_meshes = Vec::new();
@@ -110,9 +110,9 @@ pub fn check_assets_ready(
     info!("checking meshes");
     for mesh_and_scene in &mesh_assets_loading.0 {
         match server.get_load_state(&mesh_and_scene.clone()).unwrap() {
-            bevy::asset::LoadState::Failed(_) => {
+            bevy::asset::LoadState::Failed(err) => {
                 load_failure = true;
-                error!("Mesh failed to load");
+                error!("Mesh failed to load: {:?}", err);
             }
             bevy::asset::LoadState::Loaded => {}
             _ => {
@@ -140,12 +140,3 @@ pub fn check_assets_ready(
         asset_state_next.set(is_loaded_without_failure);
     }
 }
-
-// pub fn substitute_prefab(
-//     prefab: (String, Mesh),
-//     gltf: Res<MeshAssets>,
-//     mut meshes: ResMut<Assets<Mesh>>,
-// ) -> Handle<Mesh> {
-
-//     meshes.add(prefab.1)
-// }

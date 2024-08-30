@@ -1,6 +1,6 @@
 use self::events::LoadLevelEvent;
 use bevy::prelude::*;
-use resources::{check_assets_ready, init_resources, ImageAssets, ImageAssetsLoading, MeshAssets};
+use resources::{check_assets_ready, init_resources, ImageAssets, ImageAssetsLoading, MeshAssets, SessionAssets};
 use systems::setup_level;
 
 pub mod components;
@@ -15,7 +15,7 @@ impl Plugin for LoaderPlugin {
             .add_event::<LoadLevelEvent>()
             .init_resource::<ImageAssets>()
             .init_resource::<MeshAssets>()
-            .add_systems(OnEnter(AssetLoadState::Initializing), init_resources)
+            .add_systems(Update, init_resources.run_if(resource_added::<SessionAssets>))
             .add_systems(OnEnter(AssetLoadState::Loaded), setup_level)
             .add_systems(
                 Update,
