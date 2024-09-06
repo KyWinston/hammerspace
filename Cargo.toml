@@ -12,14 +12,7 @@ keywords = ["bevy"]
 publish = true
 
 [dependencies]
-# bevy = { git = "https://github.com/bevyengine/bevy", branch="release-0.14.2", default-features = false, features = [
-#     "bevy_asset",
-#     "bevy_scene",
-#     "bevy_state",
-#     "bevy_gltf",
-#     "asset_processor",
-# ] }
-bevy = { version="0.14.1", default-features = false, features = [
+bevy = { version="0.14.2", default-features = false, features = [
     "bevy_asset",
     "bevy_scene",
     "bevy_state",
