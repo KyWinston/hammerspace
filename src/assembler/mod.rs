@@ -1,9 +1,9 @@
 use bevy::prelude::*;
 use resources::{
-    check_assets_ready, init_resources, ImageAssets, ImageAssetsLoading, MeshAssets, SessionAssets,
+    check_assets_ready, init_resources, ImageAssets, ImageAssetsLoading, MeshAssets, PreparedScenes, SessionAssets
 };
+use systems::setup_blueprints;
 
-use systems::setup_level;
 
 pub mod components;
 pub mod resources;
@@ -15,11 +15,12 @@ impl Plugin for LoaderPlugin {
         app.init_state::<AssetLoadState>()
             .init_resource::<ImageAssets>()
             .init_resource::<MeshAssets>()
+            .init_resource::<PreparedScenes>()
+            .add_systems(OnEnter(AssetLoadState::Loaded), setup_blueprints)
             .add_systems(
                 Update,
                 init_resources.run_if(resource_added::<SessionAssets>),
             )
-            .add_systems(OnEnter(AssetLoadState::Loaded), setup_level)
             .add_systems(
                 Update,
                 check_assets_ready
