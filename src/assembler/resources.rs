@@ -9,6 +9,7 @@ pub struct SessionAssets(
     pub HashMap<String, String>,
     pub HashMap<String, String>,
     pub HashMap<String, String>,
+    pub HashMap<String, String>,
 );
 
 #[derive(Resource, Default)]
@@ -16,6 +17,9 @@ pub struct ImageAssets(pub HashMap<String, Handle<Image>>);
 
 #[derive(Resource, Default)]
 pub(crate) struct MeshAssets(pub HashMap<String, Handle<Gltf>>);
+
+#[derive(Resource, Default)]
+pub(crate) struct PreparedScenes(pub HashMap<String, Handle<Gltf>>);
 
 #[derive(Resource, Default)]
 pub(crate) struct ImageAssetsLoading(pub Vec<Handle<Image>>);
@@ -28,10 +32,19 @@ pub(crate) fn init_resources(
     session_assets: Res<SessionAssets>,
     mut mesh_assets: ResMut<MeshAssets>,
     mut image_assets: ResMut<ImageAssets>,
+    mut scenes: ResMut<PreparedScenes>,
     server: Res<AssetServer>,
 ) {
     info!("initializing resources");
     info!("initializing sprites");
+
+     //scene
+     scenes.0.extend(
+        session_assets
+            .0
+            .iter()
+            .map(|f| (f.0.to_string(), server.load(f.1.to_string() + ".gltf"))),
+    );
 
     for map in [
         ["uv_color", "uv_canvas"],
@@ -41,7 +54,7 @@ pub(crate) fn init_resources(
         ["volume", "volume"],
     ] {
         //sprite_sheets
-        image_assets.0.extend(session_assets.0.iter().map(|f| {
+        image_assets.0.extend(session_assets.1.iter().map(|f| {
             (
                 map[0].to_string(),
                 server.load("images/sprites/".to_owned() + f.1 + "/" + map[1] + ".png"),
@@ -51,17 +64,19 @@ pub(crate) fn init_resources(
     info!("initializing images");
 
     //still images
-    image_assets.0.extend(session_assets.1.iter().map(|f| {
+    image_assets.0.extend(session_assets.2.iter().map(|f| {
         (
             f.0.to_string(),
             server.load("images/".to_owned() + f.1 + ".png"),
         )
     }));
 
+   
+
     //meshes
     mesh_assets.0.extend(
         session_assets
-            .2
+            .3
             .iter()
             .map(|f| (f.0.to_string(), server.load(f.1.to_string() + ".gltf"))),
     );
