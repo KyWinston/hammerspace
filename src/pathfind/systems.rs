@@ -1,4 +1,5 @@
 use std::sync::{Arc, RwLock};
+use rand::Rng;
 
 use bevy::{gltf::GltfMesh, prelude::*, render::mesh::Mesh};
 use vleue_navigator::NavMesh;
@@ -15,7 +16,7 @@ pub fn get_path(
     mut path_ev: EventReader<PathEvent>,
 ) {
     for ev in path_ev.read() {
-        if handles.0.is_none(){
+        if handles.0.is_none() {
             return;
         }
         if handles.1.is_none() {
@@ -41,9 +42,21 @@ pub fn get_path(
 
             let from = ev.1;
             let to = ev.2;
-                let finding = FindingPath(Arc::new(RwLock::new((navmesh.path(from.xz(), to.xz()), false))));
-                commands.entity(ev.0).insert(finding);
-               
+            let finding = FindingPath(Arc::new(RwLock::new((
+                navmesh.path(from.xz(), to.xz()),
+                false,
+            ))));
+            commands.entity(ev.0).insert(finding);
         }
     }
+}
+
+pub fn pick_point_in_range(
+    center: Vec3,
+    range: (Vec3, Vec3),
+) -> Vec3 {
+    let range_x = rand::thread_rng().gen_range(center.x - range.0.x..center.x + range.1.x);
+    let range_y = rand::thread_rng().gen_range(center.y - range.0.y..center.y + range.1.y);
+    let range_z = rand::thread_rng().gen_range(center.z - range.0.x..center.x + range.1.z);
+    Vec3::new(range_x,range_y, range_z)
 }
