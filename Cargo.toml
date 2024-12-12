@@ -11,16 +11,17 @@ keywords = ["bevy"]
 publish = true
 
 [dependencies]
-bevy = { version = "0.14.2", default-features = false, features = [
+bevy = { version = "0.15.0", default-features = false, features = [
     "bevy_asset",
     "bevy_scene",
+    "bevy_render",
     "bevy_state",
+    "bevy_sprite",
     "bevy_gltf",
-    "asset_processor",
 ] }
 serde = "1.0.195"
 cfg-if = "1.0.0"
-vleue_navigator = { version = "0.8.0", optional = true }
+vleue_navigator = { version = "0.10.2", optional = true }
 clap = { version = "4.5.*", optional = true }
 bitflags = { version = "2.5.0", optional = true }
 bevy_panorbit_camera = { version = "0.19.1", optional = true }
@@ -28,8 +29,9 @@ sickle_ui = { version = "0.2.1", optional = true }
 baby_shark = { version = "0.3.3", optional = true }
 stl_io = { version = "0.7.0", optional = true }
 image = { version = "0.25.*", optional = true }
-blenvy = "0.1.0-alpha.1"
+blenvy = { git = "https://github.com/ptsd/Blenvy", branch = "blenvy-bevy-0.15" }
 rand = "0.8.5"
+# bevy_copperfield = "0.1.0"
 
 [dev-dependencies]
 cargo-husky = { version = "1", features = [

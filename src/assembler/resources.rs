@@ -1,8 +1,11 @@
 use super::AssetLoadState;
-use bevy::{gltf::Gltf, prelude::*, utils::HashMap};
+use bevy::{
+    asset::Handle, gltf::Gltf, prelude::*,
+    utils::HashMap,
+};
 
 #[derive(Resource)]
-pub struct LoadingTextures(pub Vec<Handle<Image>>);
+pub struct LoadingTextures(pub Vec<Sprite>);
 
 #[derive(Resource)]
 pub struct SessionAssets(
@@ -13,7 +16,7 @@ pub struct SessionAssets(
 );
 
 #[derive(Resource, Default)]
-pub struct ImageAssets(pub HashMap<String, Handle<Image>>);
+pub struct ImageAssets(pub HashMap<String, Sprite>);
 
 #[derive(Resource, Default)]
 pub(crate) struct MeshAssets(pub HashMap<String, Handle<Gltf>>);
@@ -22,7 +25,7 @@ pub(crate) struct MeshAssets(pub HashMap<String, Handle<Gltf>>);
 pub(crate) struct PreparedScenes(pub HashMap<String, Handle<Gltf>>);
 
 #[derive(Resource, Default)]
-pub(crate) struct ImageAssetsLoading(pub Vec<Handle<Image>>);
+pub(crate) struct ImageAssetsLoading(pub Vec<Sprite>);
 
 #[derive(Resource, Default)]
 pub(crate) struct MeshAssetsLoading(pub Vec<Handle<Gltf>>);
@@ -38,8 +41,8 @@ pub(crate) fn init_resources(
     info!("initializing resources");
     info!("initializing sprites");
 
-     //scene
-     scenes.0.extend(
+    //scene
+    scenes.0.extend(
         session_assets
             .0
             .iter()
@@ -57,7 +60,10 @@ pub(crate) fn init_resources(
         image_assets.0.extend(session_assets.1.iter().map(|f| {
             (
                 map[0].to_string(),
-                server.load("images/sprites/".to_owned() + f.1 + "/" + map[1] + ".png"),
+                Sprite {
+                    image: server.load("images/sprites/".to_owned() + f.1 + "/" + map[1] + ".png"),
+                    ..default()
+                },
             )
         }));
     }
@@ -67,11 +73,12 @@ pub(crate) fn init_resources(
     image_assets.0.extend(session_assets.2.iter().map(|f| {
         (
             f.0.to_string(),
-            server.load("images/".to_owned() + f.1 + ".png"),
+            Sprite {
+                image: server.load("images/".to_owned() + f.1 + ".png"),
+                ..default()
+            },
         )
     }));
-
-   
 
     //meshes
     mesh_assets.0.extend(
@@ -107,8 +114,8 @@ pub(crate) fn check_assets_ready(
     let mut not_loaded_count: i64 = 0;
     let mut load_failure = false;
     info!("checking images");
-    for image_handle in &image_assets_loading.0 {
-        match server.get_load_state(&image_handle.clone()).unwrap() {
+    for sprite in &image_assets_loading.0 {
+        match server.get_load_state(&sprite.image.clone()).unwrap() {
             bevy::asset::LoadState::Failed(_) => {
                 load_failure = true;
                 error!("Image failed to load");

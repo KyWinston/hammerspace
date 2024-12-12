@@ -3,14 +3,7 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct MaterialPending;
 
-// #[derive(Component)]
-// pub(crate) struct SfxEmitter {
-//     pub sound: String,
-//     pub intensity: f32,
-//     pub looped: bool,
-// }
-
-#[derive(Component)]
+#[derive(Component, Default)]
 pub struct Setpiece {
     pub dynamic: bool,
 }
@@ -18,23 +11,9 @@ pub struct Setpiece {
 #[derive(Component)]
 pub struct LevelTerrain;
 
-#[derive(Bundle)]
-pub struct PrefabBundle {
-    rendered_mesh: PbrBundle,
-    collision_mesh: Handle<Mesh>,
-    setpiece: Setpiece,
-}
-
-impl PrefabBundle {
-    pub fn new(dynamic: bool, mesh: Handle<Mesh>, material: Handle<StandardMaterial>) -> Self {
-        Self {
-            rendered_mesh: PbrBundle {
-                mesh: mesh.clone(),
-                material,
-                ..default()
-            },
-            collision_mesh: mesh,
-            setpiece: Setpiece { dynamic },
-        }
-    }
+#[derive(Component)]
+#[require(MeshMaterial3d<StandardMaterial>, Setpiece)]
+pub struct Prefab {
+    pub rendered_mesh: MeshMaterial3d<StandardMaterial>,
+    pub collision_mesh: Mesh3d,
 }
