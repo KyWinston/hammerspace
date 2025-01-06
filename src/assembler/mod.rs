@@ -1,11 +1,15 @@
 use bevy::prelude::*;
+use events::PrepareLevelEvent;
+
 use resources::{
-    check_assets_ready, init_resources, ImageAssets, ImageAssetsLoading, MeshAssets, PreparedScenes, SessionAssets
+    check_assets_ready, init_resources, ImageAssets, ImageAssetsLoading, MeshAssets,
+    PreparedScenes, SessionAssets,
 };
+
 use systems::setup_blueprints;
 
-
 pub mod components;
+pub mod events;
 pub mod resources;
 pub mod systems;
 pub struct LoaderPlugin;
@@ -16,16 +20,16 @@ impl Plugin for LoaderPlugin {
             .init_resource::<ImageAssets>()
             .init_resource::<MeshAssets>()
             .init_resource::<PreparedScenes>()
-            .add_systems(OnEnter(AssetLoadState::Loaded), setup_blueprints)
+            .add_event::<PrepareLevelEvent>()
             .add_systems(
                 Update,
-                init_resources.run_if(resource_added::<SessionAssets>),
-            )
-            .add_systems(
-                Update,
-                check_assets_ready
-                    .run_if(resource_exists::<ImageAssetsLoading>)
-                    .run_if(in_state(AssetLoadState::Loading)),
+                (
+                    setup_blueprints.run_if(on_event::<PrepareLevelEvent>),
+                    init_resources.run_if(resource_added::<SessionAssets>),
+                    check_assets_ready
+                        .run_if(resource_exists::<ImageAssetsLoading>)
+                        .run_if(in_state(AssetLoadState::Loading),
+              )  ),
             );
     }
 }
