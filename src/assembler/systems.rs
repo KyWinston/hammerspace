@@ -37,3 +37,4 @@ pub fn spawn_actor<'a>(commands: &'a mut Commands, name: String) -> EntityComman
         Transform::from_xyz(x, 2.0, y),
     ))
 }
+

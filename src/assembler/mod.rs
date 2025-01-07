@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use components::MaterialMarker;
 use events::PrepareLevelEvent;
 
 use resources::{
@@ -28,9 +29,10 @@ impl Plugin for LoaderPlugin {
                     init_resources.run_if(resource_added::<SessionAssets>),
                     check_assets_ready
                         .run_if(resource_exists::<ImageAssetsLoading>)
-                        .run_if(in_state(AssetLoadState::Loading),
-              )  ),
-            );
+                        .run_if(in_state(AssetLoadState::Loading)),
+                ),
+            )
+            .register_type::<MaterialMarker>();
     }
 }
 
