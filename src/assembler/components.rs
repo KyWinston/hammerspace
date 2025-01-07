@@ -17,3 +17,6 @@ pub struct Prefab {
     pub rendered_mesh: MeshMaterial3d<StandardMaterial>,
     pub collision_mesh: Mesh3d,
 }
+
+#[derive(Component, Default)]
+pub struct Character;
