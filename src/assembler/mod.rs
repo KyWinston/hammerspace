@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use components::MaterialMarker;
 use events::PrepareLevelEvent;
 
+use iyes_progress::ProgressPlugin;
 use resources::{
     check_assets_ready, init_resources, ImageAssets, ImageAssetsLoading, MeshAssets,
     PreparedScenes, SessionAssets,
@@ -18,6 +19,11 @@ pub struct LoaderPlugin;
 impl Plugin for LoaderPlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<AssetLoadState>()
+            .enable_state_scoped_entities::<AssetLoadState>()
+            .add_plugins(
+                ProgressPlugin::<AssetLoadState>::new()
+                    .with_state_transition(AssetLoadState::Loading, AssetLoadState::Loaded),
+            )
             .init_resource::<ImageAssets>()
             .init_resource::<MeshAssets>()
             .init_resource::<PreparedScenes>()
@@ -30,7 +36,8 @@ impl Plugin for LoaderPlugin {
                     check_assets_ready
                         .run_if(resource_exists::<ImageAssetsLoading>)
                         .run_if(in_state(AssetLoadState::Loading)),
-                ),
+                )
+                    .chain(),
             )
             .register_type::<MaterialMarker>();
     }

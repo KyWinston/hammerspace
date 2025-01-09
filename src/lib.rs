@@ -28,6 +28,7 @@ impl Plugin for HammerspacePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             LoaderPlugin,
+        
             BlenvyPlugin::default(),
             #[cfg(feature = "pathfind")]
             PathFindPlugin,
