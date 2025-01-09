@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use components::MaterialMarker;
-use events::PrepareLevelEvent;
+use events::{PostProgresssEvent, PrepareLevelEvent};
 
 use iyes_progress::ProgressPlugin;
 use resources::{
@@ -28,6 +28,7 @@ impl Plugin for LoaderPlugin {
             .init_resource::<MeshAssets>()
             .init_resource::<PreparedScenes>()
             .add_event::<PrepareLevelEvent>()
+            .add_event::<PostProgresssEvent>()
             .add_systems(
                 Update,
                 (
