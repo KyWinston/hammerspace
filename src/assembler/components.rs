@@ -8,6 +8,3 @@ pub struct Character;
 
 #[derive(Component, Default, Reflect)]
 pub struct MaterialMarker(pub String);
-
-#[derive(Component, Default, Reflect)]
-pub struct ProgressBar;

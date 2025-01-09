@@ -1,4 +1,4 @@
-use super::AssetLoadState;
+use super::{events::PostProgresssEvent, AssetLoadState};
 use bevy::{asset::Handle, gltf::Gltf, prelude::*, utils::HashMap};
 use blenvy::GameWorldTag;
 use iyes_progress::ProgressEntry;
@@ -7,7 +7,7 @@ use iyes_progress::ProgressEntry;
 pub struct LoadingTextures(pub Vec<Sprite>);
 
 #[derive(Resource)]
-pub(crate) struct SessionAssets(
+pub struct SessionAssets(
     pub HashMap<String, String>,
     pub HashMap<String, String>,
     pub HashMap<String, String>,
@@ -15,10 +15,10 @@ pub(crate) struct SessionAssets(
 );
 
 #[derive(Resource, Default)]
-pub(crate) struct ImageAssets(pub HashMap<String, Sprite>);
+pub struct ImageAssets(pub HashMap<String, Sprite>);
 
 #[derive(Resource, Default)]
-pub(crate) struct MeshAssets(pub HashMap<String, Handle<Gltf>>);
+pub struct MeshAssets(pub HashMap<String, Handle<Gltf>>);
 
 #[derive(Resource, Default)]
 pub(crate) struct PreparedScenes(pub HashMap<String, Handle<Gltf>>);
@@ -103,15 +103,14 @@ pub(crate) fn init_resources(
 pub(crate) fn check_assets_ready(
     world: Query<&GameWorldTag>,
     progress: ProgressEntry<AssetLoadState>,
+    mut progress_ev: EventWriter<PostProgresssEvent>,
     mut initted: Local<bool>,
     server: Res<AssetServer>,
-    _images: Res<ImageAssets>,
     image_assets_loading: Res<ImageAssetsLoading>,
     mesh_assets_loading: Res<MeshAssetsLoading>,
 ) {
     if world.get_single().is_ok() {
         info!("checking assets");
-        info!("checking images");
         if !*initted {
             progress.set_total(
                 image_assets_loading.0.len() as u32 + mesh_assets_loading.0.len() as u32,
@@ -125,6 +124,11 @@ pub(crate) fn check_assets_ready(
                 }
                 bevy::asset::LoadState::Loaded => {
                     progress.add_done(1);
+                    progress_ev.send(PostProgresssEvent(
+                        "loading images".to_string(),
+                        progress.get_done(),
+                        progress.get_total(),
+                    ));
                 }
                 _ => {}
             }
@@ -138,6 +142,11 @@ pub(crate) fn check_assets_ready(
                 }
                 bevy::asset::LoadState::Loaded => {
                     progress.add_done(1);
+                    progress_ev.send(PostProgresssEvent(
+                        "loading meshes".to_string(),
+                        progress.get_done(),
+                        progress.get_total(),
+                    ));
                 }
                 _ => {}
             }
