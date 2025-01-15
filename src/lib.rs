@@ -16,6 +16,7 @@ pub mod editor;
 pub mod pathfind;
 
 pub mod resources;
+pub mod components;
 
 #[cfg(feature = "proc_terrain")]
 pub mod terrain;
