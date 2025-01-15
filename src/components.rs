@@ -2,7 +2,7 @@ use bevy::prelude::*;
 
 /// actors are able to be interacted with and are in turn able to interact with the player
 /// this includes hostile npcs that can attack the player
-#[derive(Component)]
+#[derive(Component, Default)]
 #[require(Interactable)]
 pub struct Actor;
 
