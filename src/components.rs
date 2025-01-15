@@ -9,7 +9,7 @@ pub struct Actor;
 /// use this if interacting with something would start a dialogue sequence
 /// actors with dialogue can react to the players location relative to them (this can be used to have the actor look at the player)
 /// entities with dialogue for the player cannot deal damage.
-#[derive(Component)]
+#[derive(Component, Default)]
 #[require(Interactable)]
 pub struct HasDialogue;
 
