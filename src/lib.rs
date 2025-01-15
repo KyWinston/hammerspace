@@ -1,22 +1,21 @@
+use crate::location_marker::LocationMarkerPlugin;
 use assembler::LoaderPlugin;
 use bevy::prelude::*;
-
 use blenvy::BlenvyPlugin;
 
 #[cfg(feature = "pathfind")]
 use pathfind::{events::PathEvent, PathFindPlugin};
 use resources::HammerspaceConfig;
 
-pub mod assembler;
 pub mod ai_controller;
-pub mod systems;
+pub mod assembler;
 pub mod components;
+pub mod location_marker;
 pub mod resources;
+pub mod systems;
 
 #[cfg(feature = "pathfind")]
 pub mod pathfind;
-
-
 
 #[cfg(feature = "proc_terrain")]
 pub mod terrain;
@@ -29,6 +28,7 @@ impl Plugin for HammerspacePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             LoaderPlugin,
+            LocationMarkerPlugin,
             BlenvyPlugin::default(),
             #[cfg(feature = "pathfind")]
             PathFindPlugin,
