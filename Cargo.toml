@@ -31,7 +31,6 @@ image = { version = "0.25.*", optional = true }
 blenvy = { git = "https://github.com/ptsd/Blenvy", branch = "blenvy-bevy-0.15" }
 rand = "0.8.5"
 iyes_progress = "0.13.1"
-big-brain = { version = "0.21.1", optional = true }
 bevy_copperfield = { version = "0.1.0", optional = true }
 
 [dev-dependencies]
@@ -43,7 +42,7 @@ cargo-husky = { version = "1", features = [
 
 [features]
 default = []
-pathfind = ["dep:vleue_navigator", "dep:big-brain"]
+pathfind = ["dep:vleue_navigator"]
 proc_terrain = [
     "dep:baby_shark",
     "dep:bevy_copperfield",

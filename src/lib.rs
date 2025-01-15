@@ -8,12 +8,15 @@ use pathfind::{events::PathEvent, PathFindPlugin};
 use resources::HammerspaceConfig;
 
 pub mod assembler;
+pub mod ai_controller;
+pub mod systems;
+pub mod components;
+pub mod resources;
 
 #[cfg(feature = "pathfind")]
 pub mod pathfind;
 
-pub mod components;
-pub mod resources;
+
 
 #[cfg(feature = "proc_terrain")]
 pub mod terrain;

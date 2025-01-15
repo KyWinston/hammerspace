@@ -16,4 +16,14 @@ pub struct HasDialogue;
 /// interactables are able to be interacted with by the player, either by locking onto them or by talking to them
 /// this includes hostile npcs that can attack the player
 #[derive(Component, Default)]
-pub struct Interactable(pub String);
+pub struct Interactable {
+    pub tag: String,
+    interact_distace: f32,
+    pub(crate) in_view: bool,
+}
+
+impl Interactable {
+    pub fn in_range(self, distance: f32) -> bool {
+        self.in_view && distance < self.interact_distace
+    }
+}

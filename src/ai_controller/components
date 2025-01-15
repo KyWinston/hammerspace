@@ -1,4 +1,0 @@
-
-
-#[derive(Component)]
-pub struct AiController;
