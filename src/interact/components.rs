@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
-/// actors are able to be interacted with and are in turn able to interact with the player
-/// this includes hostile npcs that can attack the player
+/// actors are able to be interacted with and are can react to the proximity of other interactable entities
 #[derive(Component, Default)]
 #[require(Interactable)]
 pub struct Actor;
@@ -10,7 +9,7 @@ impl Actor {
     pub fn list_valid_interacts(
         location: Vec3,
         distance: f32,
-        int_q: Query<(&Transform, &Interactable), Without<Player>>,
+        int_q: Query<(&Transform, &Interactable), Without<Agent>>,
         exclude_offscreen: bool,
     ) -> Vec<Transform> {
         let mut list: Vec<Transform> = vec![];
@@ -25,9 +24,28 @@ impl Actor {
     }
 }
 
+/// agents are connected to a player or ai controller, and are able to lock on to other interactables and track them
 #[derive(Component, Default)]
 #[require(Actor)]
-pub struct Player;
+pub struct Agent {
+    locked_onto: Option<Entity>,
+    pub focused_idx: Option<usize>,
+}
+
+impl Agent {
+    pub fn new() -> Self {
+        Self {
+            locked_onto: None,
+            focused_idx: None,
+        }
+    }
+
+    pub fn lock_on(&mut self, focus_list: Vec<Entity>) {
+        if self.focused_idx.is_some() {
+            self.locked_onto = Some(focus_list[self.focused_idx.unwrap()]);
+        }
+    }
+}
 
 /// use this if interacting with something would start a dialogue sequence
 /// actors with dialogue can react to the players location relative to them (this can be used to have the actor look at the player)
