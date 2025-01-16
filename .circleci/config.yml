@@ -14,12 +14,13 @@ jobs:
       - run: rustup update stable && rustup default stable
       - run: cargo build --release
   test:
-    -Rust cargo test
     docker:
       # Specify the version you desire here
       # See: https://circleci.com/developer/images/image/cimg/base
       - image: cimg/base:current
     steps:
+      - Rust cargo test
+
       - run: cargo clippy --all-targets --all-features -- -D warnings
       - run: cargo test
 
