@@ -5,15 +5,10 @@ version: 2.1
 jobs:
   build:
     name: Rust project - latest
-    runs-on: ubuntu-latest
     docker:
       # Specify the version you desire here
       # See: https://circleci.com/developer/images/image/cimg/base
       - image: cimg/base:current
-    strategy:
-      matrix:
-        toolchain:
-          - stable
     steps:
       - Install stable toolchain
       - run: sudo apt-get install g++ pkg-config libx11-dev libasound2-dev libudev-dev libxkbcommon-x11-0 
@@ -21,7 +16,6 @@ jobs:
       - run: cargo build --release
   test:
     -Rust cargo test
-    runs-on: ubuntu-latest
     docker:
       # Specify the version you desire here
       # See: https://circleci.com/developer/images/image/cimg/base
