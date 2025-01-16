@@ -3,17 +3,16 @@ use assembler::LoaderPlugin;
 use bevy::prelude::*;
 use blenvy::BlenvyPlugin;
 
+use interact::InteractPlugin;
 #[cfg(feature = "pathfind")]
 use pathfind::{events::PathEvent, PathFindPlugin};
 use resources::HammerspaceConfig;
-use systems::check_in_view;
 
 pub mod ai_controller;
 pub mod assembler;
-pub mod components;
+pub mod interact;
 pub mod location_marker;
 pub mod resources;
-pub mod systems;
 
 #[cfg(feature = "pathfind")]
 pub mod pathfind;
@@ -30,13 +29,13 @@ impl Plugin for HammerspacePlugin {
         app.add_plugins((
             LoaderPlugin,
             LocationMarkerPlugin,
+            InteractPlugin,
             BlenvyPlugin::default(),
             #[cfg(feature = "pathfind")]
             PathFindPlugin,
             #[cfg(feature = "proc_terrain")]
             TerrainPlugin,
-        ))
-        .add_systems(Update, check_in_view);
+        ));
         #[cfg(feature = "pathfind")]
         app.add_event::<PathEvent>();
         app.insert_resource::<HammerspaceConfig>(self.config.clone());

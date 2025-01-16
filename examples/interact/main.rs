@@ -9,7 +9,7 @@ use bevy_third_person_camera::{
     ThirdPersonCamera, ThirdPersonCameraPlugin, ThirdPersonCameraTarget, Zoom,
 };
 use hammerspace::{
-    components::{Actor, Interactable, Player},
+    interact::components::{Actor, Interactable, Player},
     resources::HammerspaceConfig,
     HammerspacePlugin,
 };
@@ -104,7 +104,7 @@ fn main() {
                 if let Ok((t, _i)) = player_q.get_single() {
                     println!(
                         "{:?}",
-                        Actor::list_valid_interacts(t.translation, 30.0, int_q,true).len()
+                        Actor::list_valid_interacts(t.translation, 30.0, int_q, true).len()
                     );
                 }
             },
