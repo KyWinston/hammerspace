@@ -6,6 +6,29 @@ use bevy::prelude::*;
 #[require(Interactable)]
 pub struct Actor;
 
+impl Actor {
+    pub fn list_valid_interacts(
+        location: Vec3,
+        distance: f32,
+        int_q: Query<(&Transform, &Interactable), Without<Player>>,
+        exclude_offscreen: bool,
+    ) -> Vec<Transform> {
+        let mut list: Vec<Transform> = vec![];
+        for (transform, int) in int_q.iter() {
+            let range = location.distance(transform.translation);
+            if range < distance && int.in_range(range, exclude_offscreen) {
+                list.push(*transform);
+            }
+        }
+        list.sort_by(|a, b| a.translation.length().total_cmp(&b.translation.length()));
+        list
+    }
+}
+
+#[derive(Component, Default)]
+#[require(Actor)]
+pub struct Player;
+
 /// use this if interacting with something would start a dialogue sequence
 /// actors with dialogue can react to the players location relative to them (this can be used to have the actor look at the player)
 /// entities with dialogue for the player cannot deal damage.
@@ -23,7 +46,14 @@ pub struct Interactable {
 }
 
 impl Interactable {
-    pub fn in_range(self, distance: f32) -> bool {
-        self.in_view && distance < self.interact_distace
+    pub fn new(tag: String) -> Self {
+        Self {
+            tag,
+            interact_distace: 50.0,
+            in_view: false,
+        }
+    }
+    pub fn in_range(&self, distance: f32, exclude_offscreen: bool) -> bool {
+        !exclude_offscreen || self.in_view && distance < self.interact_distace
     }
 }

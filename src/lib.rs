@@ -6,6 +6,7 @@ use blenvy::BlenvyPlugin;
 #[cfg(feature = "pathfind")]
 use pathfind::{events::PathEvent, PathFindPlugin};
 use resources::HammerspaceConfig;
+use systems::check_in_view;
 
 pub mod ai_controller;
 pub mod assembler;
@@ -34,7 +35,8 @@ impl Plugin for HammerspacePlugin {
             PathFindPlugin,
             #[cfg(feature = "proc_terrain")]
             TerrainPlugin,
-        ));
+        ))
+        .add_systems(Update, check_in_view);
         #[cfg(feature = "pathfind")]
         app.add_event::<PathEvent>();
         app.insert_resource::<HammerspaceConfig>(self.config.clone());
