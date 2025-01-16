@@ -16,7 +16,6 @@ jobs:
           - stable
     steps:
       - Install stable toolchain
-        uses: actions-rs/toolchain@v1
         with: 
           profile: minimal
           toolchain: stable
