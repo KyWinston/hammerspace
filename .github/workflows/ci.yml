@@ -18,7 +18,6 @@ env:
   CRATE_PATHS: .
 
 jobs:
-
   test:
     runs-on: ubuntu-18.04
     steps:
@@ -31,7 +30,7 @@ jobs:
           profile: minimal
           override: true
       - name: Build
-        run: cargo build --all-targets
+        run: cargo build --release
       - name: Test
         run: cargo test
 

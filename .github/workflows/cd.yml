@@ -36,7 +36,7 @@ jobs:
           profile: minimal
           override: true
       - name: Build
-        run: cargo build --all-targets
+        run: cargo build --release
       - name: Test
         run: cargo test
 
@@ -53,7 +53,7 @@ jobs:
           profile: minimal
           override: true
       - name: Build
-        run: cargo build --all-targets
+        run: cargo build --release
       - name: Test
         run: cargo test
 
@@ -70,7 +70,7 @@ jobs:
           profile: minimal
           override: true
       - name: Build
-        run: cargo build --all-targets
+        run: cargo build --release
       - name: Test
         run: cargo test
 
