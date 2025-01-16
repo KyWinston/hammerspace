@@ -105,14 +105,16 @@ fn main() {
                 if let Ok((_, t, mut agent)) = player_q.get_single_mut() {
                     let list = Actor::list_valid_interacts(t.translation, 30.0, int_q, true);
                     let mut focus_ent = list[0].1.translation;
-                    if agent.focused.is_some() {
+                    if agent.focused.is_some() && list.len() > 0 {
                         for foc in list {
                             if agent.focused.unwrap() == foc.0 {
                                 focus_ent = foc.1.translation;
                             }
                         }
-                    }else{
+                    } else if list.len() > 0 {
                         agent.focused = Some(list[0].0);
+                    } else {
+                        agent.focused = None;
                     }
                     gizmos.arrow(
                         Vec3::new(focus_ent.x, focus_ent.y + 5.0, focus_ent.z),
