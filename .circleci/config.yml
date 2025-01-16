@@ -16,12 +16,8 @@ jobs:
           - stable
     steps:
       - Install stable toolchain
-        with: 
-          profile: minimal
-          toolchain: stable
-          override: true
       - run: sudo apt-get install g++ pkg-config libx11-dev libasound2-dev libudev-dev libxkbcommon-x11-0 
-      - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+      - run: rustup update stable && rustup default stable
       - run: cargo build --release
   test:
     -Rust cargo test
