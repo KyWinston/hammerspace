@@ -9,17 +9,21 @@ impl Actor {
     pub fn list_valid_interacts(
         location: Vec3,
         distance: f32,
-        int_q: Query<(&Transform, &Interactable), Without<Agent>>,
+        int_q: Query<(Entity, &Transform, &Interactable), Without<Agent>>,
         exclude_offscreen: bool,
-    ) -> Vec<Transform> {
-        let mut list: Vec<Transform> = vec![];
-        for (transform, int) in int_q.iter() {
+    ) -> Vec<(Entity, Transform)> {
+        let mut list: Vec<(Entity, Transform)> = vec![];
+        for (ent, transform, int) in int_q.iter() {
             let range = location.distance(transform.translation);
             if range < distance && int.in_range(range, exclude_offscreen) {
-                list.push(*transform);
+                list.push((ent, *transform));
             }
         }
-        list.sort_by(|a, b| a.translation.length().total_cmp(&b.translation.length()));
+        list.sort_by(|a, b| {
+            a.1.translation
+                .length()
+                .total_cmp(&b.1.translation.length())
+        });
         list
     }
 }
@@ -28,21 +32,27 @@ impl Actor {
 #[derive(Component, Default)]
 #[require(Actor)]
 pub struct Agent {
-    locked_onto: Option<Entity>,
-    pub focused_idx: Option<usize>,
+    locked_on: bool,
+    pub focused: Option<Entity>,
 }
 
 impl Agent {
     pub fn new() -> Self {
         Self {
-            locked_onto: None,
-            focused_idx: None,
+            locked_on: false,
+            focused: None,
         }
     }
 
     pub fn lock_on(&mut self, focus_list: Vec<Entity>) {
-        if self.focused_idx.is_some() {
-            self.locked_onto = Some(focus_list[self.focused_idx.unwrap()]);
+        if self.focused.is_some() {
+            for foc in focus_list {
+                if self.focused.unwrap() == foc {
+                    self.locked_on = true;
+                }
+            }
+        } else {
+            self.focused = Some(focus_list[0]);
         }
     }
 }

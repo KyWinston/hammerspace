@@ -99,21 +99,20 @@ fn main() {
         )
         .add_systems(
             Update,
-            |mut player_q: Query<(&Transform, &Interactable, &mut Agent)>,
-             int_q: Query<(&Transform, &Interactable), Without<Agent>>,
+            |mut player_q: Query<(Entity, &Transform, &mut Agent)>,
+             int_q: Query<(Entity, &Transform, &Interactable), Without<Agent>>,
              mut gizmos: Gizmos| {
-                if let Ok((t, _i, mut agent)) = player_q.get_single_mut() {
+                if let Ok((_, t, mut agent)) = player_q.get_single_mut() {
                     let list = Actor::list_valid_interacts(t.translation, 30.0, int_q, true);
-                    let mut focus_ent = Vec3::ZERO;
-
-                    if list.len() > 0 && agent.focused_idx.is_none() {
-                        agent.focused_idx = Some(0);
-                    } else if agent.focused_idx.is_some()
-                        && list.len() > agent.focused_idx.unwrap()
-                    {
-                        focus_ent = list[agent.focused_idx.unwrap()].translation;
-                    } else {
-                        agent.focused_idx = None;
+                    let mut focus_ent = list[0].1.translation;
+                    if agent.focused.is_some() {
+                        for foc in list {
+                            if agent.focused.unwrap() == foc.0 {
+                                focus_ent = foc.1.translation;
+                            }
+                        }
+                    }else{
+                        agent.focused = Some(list[0].0);
                     }
                     gizmos.arrow(
                         Vec3::new(focus_ent.x, focus_ent.y + 5.0, focus_ent.z),
