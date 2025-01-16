@@ -1,0 +1,47 @@
+version: 2.1
+
+
+# Define the jobs we want to run for this project
+jobs:
+  build:
+    name: Rust project - latest
+    runs-on: ubuntu-latest
+    docker:
+      # Specify the version you desire here
+      # See: https://circleci.com/developer/images/image/cimg/base
+      - image: cimg/base:current
+    strategy:
+      matrix:
+        toolchain:
+          - stable
+    steps:
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with: 
+          profile: minimal
+          toolchain: stable
+          override: true
+      - run: sudo apt-get install g++ pkg-config libx11-dev libasound2-dev libudev-dev libxkbcommon-x11-0 
+      - run: rustup update ${{ matrix.toolchain }} && rustup default ${{ matrix.toolchain }}
+      - run: cargo clippy --all-targets --all-features -- -D warnings
+      - run: cargo build --release
+  test:
+    name: Rust project - latest
+    runs-on: ubuntu-latest
+    docker:
+      # Specify the version you desire here
+      # See: https://circleci.com/developer/images/image/cimg/base
+      - image: cimg/base:current
+    steps:
+      - run: cargo test
+
+
+
+# Orchestrate our job run sequence
+workflows:
+  build_and_test:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
