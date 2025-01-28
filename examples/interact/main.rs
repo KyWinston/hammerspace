@@ -1,5 +1,5 @@
 use bevy::{
-    color::palettes::css::WHITE,
+    color::palettes::{css::WHITE, tailwind::BLUE_100},
     image::{ImageAddressMode, ImageSamplerDescriptor},
     pbr::CascadeShadowConfigBuilder,
     prelude::*,
@@ -9,7 +9,7 @@ use bevy_third_person_camera::{
     ThirdPersonCamera, ThirdPersonCameraPlugin, ThirdPersonCameraTarget, Zoom,
 };
 use hammerspace::{
-    interact::components::{Actor, Interactable, Player},
+    interact::components::{Actor, Agent, Interactable},
     resources::HammerspaceConfig,
     HammerspacePlugin,
 };
@@ -39,7 +39,7 @@ fn main() {
             commands.spawn((
                 Camera3d::default(),
                 ThirdPersonCamera {
-                    zoom: Zoom::new(30.0, 60.0),
+                    zoom: Zoom::new(15.0, 60.0),
                     ..default()
                 },
             ));
@@ -72,7 +72,7 @@ fn main() {
                     MeshMaterial3d(mats.add(StandardMaterial::default())),
                     ThirdPersonCameraTarget,
                     Actor,
-                    Player,
+                    Agent::new(),
                     Transform::from_xyz(0.0, 5.0, 0.0),
                 ));
                 for loc in 1..15 {
@@ -99,12 +99,27 @@ fn main() {
         )
         .add_systems(
             Update,
-            |player_q: Query<(&Transform, &Interactable), With<Player>>,
-             int_q: Query<(&Transform, &Interactable), Without<Player>>| {
-                if let Ok((t, _i)) = player_q.get_single() {
-                    println!(
-                        "{:?}",
-                        Actor::list_valid_interacts(t.translation, 30.0, int_q, true).len()
+            |mut player_q: Query<(Entity, &Transform, &mut Agent)>,
+             int_q: Query<(Entity, &Transform, &Interactable), Without<Agent>>,
+             mut gizmos: Gizmos| {
+                if let Ok((_, t, mut agent)) = player_q.get_single_mut() {
+                    let list = Actor::list_valid_interacts(t.translation, 30.0, int_q, true);
+                    let mut focus_ent = list[0].1.translation;
+                    if agent.focused.is_some() && list.len() > 0 {
+                        for foc in list {
+                            if agent.focused.unwrap() == foc.0 {
+                                focus_ent = foc.1.translation;
+                            }
+                        }
+                    } else if list.len() > 0 {
+                        agent.focused = Some(list[0].0);
+                    } else {
+                        agent.focused = None;
+                    }
+                    gizmos.arrow(
+                        Vec3::new(focus_ent.x, focus_ent.y + 5.0, focus_ent.z),
+                        Vec3::new(focus_ent.x, focus_ent.y + 2.5, focus_ent.z),
+                        BLUE_100,
                     );
                 }
             },
