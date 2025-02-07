@@ -29,8 +29,6 @@ pub fn spawn_actor<'a>(
         },
         Dynamic,
         Name::from(format!("{}", name)),
-        HideUntilReady,
-        AddToGameWorld,
         location,
     ))
 }
