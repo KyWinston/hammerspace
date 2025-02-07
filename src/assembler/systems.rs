@@ -2,7 +2,6 @@ use bevy::prelude::*;
 use blenvy::{
     AddToGameWorld, BlueprintInfo, Dynamic, GameWorldTag, HideUntilReady, SpawnBlueprint,
 };
-use rand::Rng;
 
 use super::events::PrepareLevelEvent;
 
@@ -17,13 +16,11 @@ pub fn setup_blueprints(mut level_ev: EventReader<PrepareLevelEvent>, mut comman
     }
 }
 
-pub fn spawn_actor<'a>(commands: &'a mut Commands, name: String) -> EntityCommands<'a> {
-    let mut rng = rand::thread_rng();
-    let range = 1.5;
-    let x: f32 = rng.gen_range(-range..range);
-    let y: f32 = rng.gen_range(-range..range);
-
-    let name_index: u64 = rng.gen();
+pub fn spawn_actor<'a>(
+    commands: &'a mut Commands,
+    name: String,
+    location: Transform,
+) -> EntityCommands<'a> {
 
     commands.spawn((
         BlueprintInfo {
@@ -31,10 +28,9 @@ pub fn spawn_actor<'a>(commands: &'a mut Commands, name: String) -> EntityComman
             path: format!("blueprints/{}.glb", name),
         },
         Dynamic,
-        Name::from(format!("test {}", name_index)),
+        Name::from(format!("{}", name)),
         HideUntilReady,
         AddToGameWorld,
-        Transform::from_xyz(x, 2.0, y),
+        location,
     ))
 }
-
