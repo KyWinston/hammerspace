@@ -7,11 +7,13 @@ use interact::InteractPlugin;
 #[cfg(feature = "pathfind")]
 use pathfind::{events::PathEvent, PathFindPlugin};
 use resources::HammerspaceConfig;
+use terrain::TerrainPlugin;
 
 pub mod ai_controller;
 pub mod assembler;
 pub mod interact;
 pub mod location_marker;
+pub mod terrain;
 pub mod resources;
 
 #[cfg(feature = "pathfind")]
@@ -30,6 +32,7 @@ impl Plugin for HammerspacePlugin {
             LoaderPlugin,
             LocationMarkerPlugin,
             InteractPlugin,
+            TerrainPlugin,
             BlenvyPlugin::default(),
             #[cfg(feature = "pathfind")]
             PathFindPlugin,

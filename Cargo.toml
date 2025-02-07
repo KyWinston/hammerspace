@@ -27,11 +27,15 @@ bitflags = { version = "2.5.0", optional = true }
 sickle_ui = { version = "0.2.1", optional = true }
 baby_shark = { version = "0.3.3", optional = true }
 stl_io = { version = "0.7.0", optional = true }
-image = { version = "0.25.*", optional = true }
+image = { version = "0.25.*" }
 blenvy = { git = "https://github.com/ptsd/Blenvy", branch = "blenvy-bevy-0.15" }
 rand = "0.8.5"
 iyes_progress = "0.13.1"
 bevy_copperfield = { version = "0.1.0", optional = true }
+nalgebra = "0.33.2"
+bitintr = "0.3.0"
+palette = "0.7.6"
+enterpolation = "0.2.1"
 
 [target.'cfg(target_os = "linux")'.dev-dependencies.bevy]
 version = "0.15.1"
@@ -39,11 +43,7 @@ features = ["x11", "wayland","bevy_winit"]
 default-features = true
 
 [dev-dependencies]
-cargo-husky = { version = "1", features = [
-    "precommit-hook",
-    "run-cargo-test",
-    "run-cargo-clippy",
-] }
+
 bevy_third_person_camera = "0.2.0"
 
 [features]
@@ -52,7 +52,6 @@ pathfind = ["dep:vleue_navigator"]
 proc_terrain = [
     "dep:baby_shark",
     "dep:bevy_copperfield",
-    "dep:image",
     "dep:stl_io",
 ]
 debug = []
