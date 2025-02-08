@@ -1,7 +1,7 @@
 use bevy::prelude::*;
-use blenvy::{
-    AddToGameWorld, BlueprintInfo, Dynamic, GameWorldTag, HideUntilReady, SpawnBlueprint,
-};
+use blenvy::{BlueprintInfo, Dynamic, GameWorldTag, HideUntilReady, SpawnBlueprint};
+
+use crate::interact::components::Actor;
 
 use super::events::PrepareLevelEvent;
 
@@ -21,12 +21,12 @@ pub fn spawn_actor<'a>(
     name: String,
     location: Transform,
 ) -> EntityCommands<'a> {
-
     commands.spawn((
         BlueprintInfo {
             name: name.clone(),
             path: format!("blueprints/{}.glb", name),
         },
+        Actor,
         Dynamic,
         Name::from(format!("{}", name)),
         location,
