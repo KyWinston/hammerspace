@@ -28,7 +28,7 @@ pub fn spawn_actor<'a>(
         },
         Actor,
         Dynamic,
-        Name::from(format!("{}", name)),
+        Name::from(name),
         location,
     ))
 }
