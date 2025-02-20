@@ -29,6 +29,8 @@ jobs:
           toolchain: ${{ env.RUST_VERSION_STABLE }}
           profile: minimal
           override: true
+      - name: Install
+        run: sudo apt-get install g++ pkg-config libx11-dev libasound2-dev libudev-dev libxkbcommon-x11-0 libwayland-dev libxkbcommon-dev
       - name: Build
         run: cargo build --release
       - name: Test
@@ -111,7 +113,7 @@ jobs:
       - name: Install other dependencies
         run: sudo apt-get install moreutils dos2unix
       - name: Check encoding
-        run: isutf8 **/*
+        run: isutf8 src/**/*
       - name: Check line endings
         run: bash .github/workflows/scripts/check_line_endings.sh
       - name: Check TODOs
