@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 use components::MaterialMarker;
-use events::{PostProgresssEvent, PrepareLevelEvent};
+use events::{BlueprintReadyEvent, PostProgresssEvent, PrepareLevelEvent};
 
 use iyes_progress::ProgressPlugin;
 use resources::{
@@ -8,7 +8,7 @@ use resources::{
     PreparedScenes, SessionAssets,
 };
 
-use systems::setup_blueprints;
+use systems::{on_blueprint_complete, setup_blueprints};
 
 pub mod components;
 pub mod events;
@@ -29,6 +29,7 @@ impl Plugin for LoaderPlugin {
             .init_resource::<PreparedScenes>()
             .add_event::<PrepareLevelEvent>()
             .add_event::<PostProgresssEvent>()
+            .add_event::<BlueprintReadyEvent>()
             .add_systems(
                 Update,
                 (
@@ -40,6 +41,7 @@ impl Plugin for LoaderPlugin {
                 )
                     .chain(),
             )
+            .add_observer(on_blueprint_complete)
             .register_type::<MaterialMarker>();
     }
 }
