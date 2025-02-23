@@ -28,6 +28,7 @@ pub fn spawn_actor<'a>(
         },
         Actor,
         Dynamic,
+        HideUntilReady,
         Name::from(name),
         location,
     ))
