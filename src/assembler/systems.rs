@@ -28,7 +28,6 @@ pub fn spawn_actor<'a>(
             path: format!("blueprints/{}.glb", name),
         },
         Actor,
-        ColliderConstructorHierarchy::new(ColliderConstructor::ConvexHullFromMesh),
         Name::from(name),
         location,
     ))
