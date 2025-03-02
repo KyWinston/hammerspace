@@ -11,7 +11,7 @@ keywords = ["bevy"]
 publish = true
 
 [dependencies]
-bevy = { version = "0.15.2", default-features = false, features = [
+bevy = { version = "0.15.3", default-features = false, features = [
     "bevy_asset",
     "bevy_scene",
     "bevy_render",
@@ -28,7 +28,7 @@ sickle_ui = { version = "0.2.1", optional = true }
 baby_shark = { version = "0.3.3", optional = true }
 stl_io = { version = "0.7.0", optional = true }
 image = { version = "0.25.*" }
-blenvy = { path = "../crates/blenvy" }
+blenvy = { git = "https://github.com/TGRCdev/Blenvy", branch = "blenvy-bevy-0.15" }
 rand = "0.8.5"
 iyes_progress = "0.13.1"
 bevy_copperfield = { version = "0.1.0", optional = true }
@@ -38,12 +38,12 @@ palette = "0.7.6"
 enterpolation = "0.2.1"
 
 [target.'cfg(target_os = "linux")'.dev-dependencies.bevy]
-version = "0.15.2"
+version = "0.15.3"
 features = ["x11", "wayland", "bevy_winit"]
 default-features = true
 
 [dev-dependencies]
-bevy = { version = "0.15.2", default-features = false, features = [
+bevy = { version = "0.15.3", default-features = false, features = [
     "file_watcher",
 ] }
 
