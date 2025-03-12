@@ -356,12 +356,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "assert_float_eq"
-version = "1.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "10d2119f741b79fe9907f5396d19bffcb46568cfcc315e78677d731972ac7085"
-
-[[package]]
 name = "assert_type_match"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3112,18 +3106,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "enterpolation"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fadf5c8cbf7c6765ff05ccbd8811cd7bc3a763e4671755204552bf8740d042a"
-dependencies = [
- "assert_float_eq",
- "num-traits",
- "serde",
- "topology-traits",
-]
-
-[[package]]
 name = "equivalent"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3764,7 +3746,6 @@ dependencies = [
  "blenvy",
  "cfg-if",
  "clap",
- "enterpolation",
  "image",
  "iyes_progress",
  "nalgebra 0.33.2",
@@ -6397,15 +6378,6 @@ dependencies = [
  "serde_spanned",
  "toml_datetime",
  "winnow",
-]
-
-[[package]]
-name = "topology-traits"
-version = "0.1.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c0c8dab428531e30115d3bfd6e3092b55256a4a7b4f87cb3abe37a000b1f4032"
-dependencies = [
- "num-traits",
 ]
 
 [[package]]

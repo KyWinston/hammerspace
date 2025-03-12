@@ -1,6 +1,6 @@
 use super::{events::PostProgresssEvent, AssetLoadState};
 use bevy::{asset::Handle, gltf::Gltf, prelude::*, utils::HashMap};
-use blenvy::GameWorldTag;
+use blenvy::{BlueprintInstanceReady, GameWorldTag};
 use iyes_progress::ProgressEntry;
 
 #[derive(Resource)]
@@ -101,7 +101,7 @@ pub(crate) fn init_resources(
 }
 
 pub(crate) fn check_assets_ready(
-    world: Query<&GameWorldTag>,
+    world: Query<(&GameWorldTag, &BlueprintInstanceReady)>,
     progress: ProgressEntry<AssetLoadState>,
     mut progress_ev: EventWriter<PostProgresssEvent>,
     mut initted: Local<bool>,
