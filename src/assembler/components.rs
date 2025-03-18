@@ -7,4 +7,4 @@ pub struct LevelTerrain;
 pub struct Character;
 
 #[derive(Component, Default, Reflect)]
-pub struct MaterialMarker(pub String);
+pub struct MaterialMarker<M>(pub Handle<M>) where M:blenvy::Material;

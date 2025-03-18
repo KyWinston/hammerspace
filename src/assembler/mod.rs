@@ -1,11 +1,10 @@
 use bevy::prelude::*;
-use components::MaterialMarker;
 use events::{BlueprintReadyEvent, LevelLoadedEvent, PostProgresssEvent, PrepareLevelEvent};
 
 use iyes_progress::ProgressPlugin;
 use resources::{
-    check_assets_ready, init_resources, ImageAssets, ImageAssetsLoading, MeshAssets,
-    PreparedScenes, SessionAssets,
+    ImageAssets, ImageAssetsLoading, MeshAssets, PreparedScenes, SessionAssets, check_assets_ready,
+    init_resources,
 };
 
 use systems::{on_blueprint_complete, on_level_loaded, setup_blueprints};
@@ -43,11 +42,9 @@ impl Plugin for LoaderPlugin {
                     .chain(),
             )
             .add_observer(on_level_loaded)
-            .add_observer(on_blueprint_complete)
-            .register_type::<MaterialMarker>();
+            .add_observer(on_blueprint_complete);
     }
 }
-
 #[derive(PartialEq, Eq, Debug, Hash, Clone, Copy, Default, States)]
 pub enum AssetLoadState {
     #[default]

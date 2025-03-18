@@ -4,7 +4,7 @@ description = "A plugin for the loading and management of levels and scenes, and
 repository = "https://github.com/KyWinston/hammerspace"
 version = "0.4.2"
 authors = ["Ky Winston<kwinston@proton.me>"]
-edition = "2021"
+edition = "2024"
 exclude = ["assets/*", "examples/*", "**/bin", "*_template"]
 license = "MIT OR Apache-2.0"
 keywords = ["bevy"]
@@ -28,7 +28,7 @@ sickle_ui = { version = "0.2.1", optional = true }
 baby_shark = { version = "0.3.3", optional = true }
 stl_io = { version = "0.7.0", optional = true }
 image = { version = "0.25.*" }
-blenvy = { git = "https://github.com/TGRCdev/Blenvy", branch="blenvy-bevy-0.15" }
+blenvy = { git = "https://github.com/mdds-labs/Blenvy", branch="bevy-0.15" }
 rand = "0.8.5"
 iyes_progress = "0.13.1"
 bevy_copperfield = { version = "0.1.0", optional = true }

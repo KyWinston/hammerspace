@@ -2386,8 +2386,8 @@ dependencies = [
 
 [[package]]
 name = "blenvy"
-version = "0.1.0-alpha.2"
-source = "git+https://github.com/TGRCdev/Blenvy?branch=blenvy-bevy-0.15#41b3a2169417a503a9ecdbd652646bb82ab68e45"
+version = "0.1.0-alpha.1"
+source = "git+https://github.com/mdds-labs/Blenvy?branch=bevy-0.15#c9f143479e8583cf1b9235643f995279f836edb2"
 dependencies = [
  "bevy 0.15.3",
  "bevy_common_assets",
