@@ -3,6 +3,9 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct LevelTerrain;
 
+#[derive(Component)]
+pub struct Sky;
+
 #[derive(Component, Default)]
 pub struct Character;
 
