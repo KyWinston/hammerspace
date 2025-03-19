@@ -3,7 +3,8 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct LevelTerrain;
 
-#[derive(Component)]
+#[derive(Component,Reflect)]
+#[reflect(Component)]
 pub struct Sky;
 
 #[derive(Component, Default)]

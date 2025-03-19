@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use components::Sky;
 use events::{BlueprintReadyEvent, LevelLoadedEvent, PostProgresssEvent, PrepareLevelEvent};
 
 use iyes_progress::ProgressPlugin;
@@ -23,6 +24,7 @@ impl Plugin for LoaderPlugin {
                 ProgressPlugin::<AssetLoadState>::new()
                     .with_state_transition(AssetLoadState::Loading, AssetLoadState::Loaded),
             )
+            .register_type::<Sky>()
             .init_resource::<ImageAssets>()
             .init_resource::<MeshAssets>()
             .init_resource::<PreparedScenes>()
