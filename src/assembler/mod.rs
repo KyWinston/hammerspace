@@ -45,7 +45,7 @@ impl Plugin for LoaderPlugin {
             )
             // .add_observer(on_level_loaded)
             // .add_observer(on_blueprint_complete)
-            .register_type::<MaterialMarker>();
+            // .register_type::<MaterialMarker>();
     }
 }
 #[derive(PartialEq, Eq, Debug, Hash, Clone, Copy, Default, States)]
