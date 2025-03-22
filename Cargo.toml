@@ -4,7 +4,7 @@ description = "A plugin for the loading and management of levels and scenes, and
 repository = "https://github.com/KyWinston/hammerspace"
 version = "0.4.2"
 authors = ["Ky Winston<kwinston@proton.me>"]
-edition = "2021"
+edition = "2024"
 exclude = ["assets/*", "examples/*", "**/bin", "*_template"]
 license = "MIT OR Apache-2.0"
 keywords = ["bevy"]
@@ -19,7 +19,7 @@ bevy = { version = "0.15.3", default-features = false, features = [
     "bevy_sprite",
     "bevy_gltf",
 ] }
-serde = "1.0.195"
+serde = "1.0.219"
 cfg-if = "1.0.0"
 vleue_navigator = { version = "0.11.1", optional = true }
 clap = { version = "4.5.*", optional = true }
@@ -32,7 +32,7 @@ rand = "0.9.0"
 iyes_progress = "0.13.1"
 bevy_copperfield = { version = "0.2.2", optional = true }
 nalgebra = "0.33.2"
-bitintr = "0.3.0"
+bitintr = "0.9.0"
 palette = "0.7.6"
 enterpolation = "0.2.1"
 bevy_skein = "0.1.2"

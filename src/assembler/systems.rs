@@ -2,7 +2,10 @@ use bevy::prelude::*;
 
 use crate::interact::components::Actor;
 
-use super::events::{BlueprintReadyEvent, LevelLoadedEvent, PrepareLevelEvent};
+use super::{
+    components::Sky,
+    events::{BlueprintReadyEvent, LevelLoadedEvent, PrepareLevelEvent},
+};
 
 pub fn setup_blueprints(mut level_ev: EventReader<PrepareLevelEvent>, mut commands: Commands) {
     for ev in level_ev.read() {
