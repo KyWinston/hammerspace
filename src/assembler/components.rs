@@ -10,5 +10,5 @@ pub struct Sky;
 #[derive(Component, Default)]
 pub struct Character;
 
-#[derive(Component, Default, Reflect)]
-pub struct MaterialMarker<M>(pub Handle<M>) where M:blenvy::Material;
+// #[derive(Component, Default, Reflect)]
+// pub struct MaterialMarker<M>(pub Handle<M>) where M:blenvy::Material;
