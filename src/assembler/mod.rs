@@ -42,7 +42,7 @@ impl Plugin for LoaderPlugin {
                         .run_if(in_state(AssetLoadState::Loading)),
                 )
                     .chain(),
-            )
+            );
             // .add_observer(on_level_loaded)
             // .add_observer(on_blueprint_complete)
             // .register_type::<MaterialMarker>();
