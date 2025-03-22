@@ -1,6 +1,5 @@
 use super::{events::PostProgresssEvent, AssetLoadState};
 use bevy::{asset::Handle, gltf::Gltf, prelude::*, utils::HashMap};
-use blenvy::GameWorldTag;
 use iyes_progress::ProgressEntry;
 
 #[derive(Resource)]
@@ -101,7 +100,7 @@ pub(crate) fn init_resources(
 }
 
 pub(crate) fn check_assets_ready(
-    world: Query<&GameWorldTag>,
+    // world: Query<&GameWorldTag>,
     progress: ProgressEntry<AssetLoadState>,
     mut progress_ev: EventWriter<PostProgresssEvent>,
     mut initted: Local<bool>,
@@ -109,47 +108,47 @@ pub(crate) fn check_assets_ready(
     image_assets_loading: Res<ImageAssetsLoading>,
     mesh_assets_loading: Res<MeshAssetsLoading>,
 ) {
-    if world.get_single().is_ok() {
-        info!("checking assets");
-        if !*initted {
-            progress.set_total(
-                image_assets_loading.0.len() as u32 + mesh_assets_loading.0.len() as u32,
-            );
-            *initted = true;
-        }
-        for sprite in &image_assets_loading.0 {
-            match server.get_load_state(&sprite.image.clone()).unwrap() {
-                bevy::asset::LoadState::Failed(err) => {
-                    error!("Image failed to load: {:?}", err);
-                }
-                bevy::asset::LoadState::Loaded => {
-                    progress.add_done(1);
-                    progress_ev.send(PostProgresssEvent(
-                        "loading images".to_string(),
-                        progress.get_done(),
-                        progress.get_total(),
-                    ));
-                }
-                _ => {}
-            }
-        }
-        info!("checking meshes");
+    // if world.get_single().is_ok() {
+    //     info!("checking assets");
+    //     if !*initted {
+    //         progress.set_total(
+    //             image_assets_loading.0.len() as u32 + mesh_assets_loading.0.len() as u32,
+    //         );
+    //         *initted = true;
+    //     }
+    //     for sprite in &image_assets_loading.0 {
+    //         match server.get_load_state(&sprite.image.clone()).unwrap() {
+    //             bevy::asset::LoadState::Failed(err) => {
+    //                 error!("Image failed to load: {:?}", err);
+    //             }
+    //             bevy::asset::LoadState::Loaded => {
+    //                 progress.add_done(1);
+    //                 progress_ev.send(PostProgresssEvent(
+    //                     "loading images".to_string(),
+    //                     progress.get_done(),
+    //                     progress.get_total(),
+    //                 ));
+    //             }
+    //             _ => {}
+    //         }
+    //     }
+    //     info!("checking meshes");
 
-        for mesh_and_scene in &mesh_assets_loading.0 {
-            match server.get_load_state(&mesh_and_scene.clone()).unwrap() {
-                bevy::asset::LoadState::Failed(err) => {
-                    error!("Mesh failed to load: {:?}", err);
-                }
-                bevy::asset::LoadState::Loaded => {
-                    progress.add_done(1);
-                    progress_ev.send(PostProgresssEvent(
-                        "loading meshes".to_string(),
-                        progress.get_done(),
-                        progress.get_total(),
-                    ));
-                }
-                _ => {}
-            }
-        }
-    }
+    //     for mesh_and_scene in &mesh_assets_loading.0 {
+    //         match server.get_load_state(&mesh_and_scene.clone()).unwrap() {
+    //             bevy::asset::LoadState::Failed(err) => {
+    //                 error!("Mesh failed to load: {:?}", err);
+    //             }
+    //             bevy::asset::LoadState::Loaded => {
+    //                 progress.add_done(1);
+    //                 progress_ev.send(PostProgresssEvent(
+    //                     "loading meshes".to_string(),
+    //                     progress.get_done(),
+    //                     progress.get_total(),
+    //                 ));
+    //             }
+    //             _ => {}
+    //         }
+    //     }
+    // }
 }

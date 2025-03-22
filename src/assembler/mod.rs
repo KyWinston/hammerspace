@@ -42,8 +42,8 @@ impl Plugin for LoaderPlugin {
                 )
                     .chain(),
             )
-            .add_observer(on_level_loaded)
-            .add_observer(on_blueprint_complete)
+            // .add_observer(on_level_loaded)
+            // .add_observer(on_blueprint_complete)
             .register_type::<MaterialMarker>();
     }
 }
