@@ -1,14 +1,23 @@
 use bevy::prelude::*;
+use serde::{Deserialize, Serialize};
 
 #[derive(Component)]
-pub struct LevelTerrain;
+pub struct Level;
 
-#[derive(Component,Reflect)]
-#[reflect(Component)]
-pub struct Sky;
+#[derive(Component, Reflect, Serialize, Deserialize)]
+#[reflect(Component,Serialize, Deserialize)]
+pub struct Sky {
+    pub directional_light_color: Color,
+    pub color: Color,
+    pub directional_light_exponent: f32,
+}
 
 #[derive(Component, Default)]
 pub struct Character;
 
-// #[derive(Component, Default, Reflect)]
-// pub struct MaterialMarker<M>(pub Handle<M>) where M:blenvy::Material;
+#[derive(Component, Default)]
+#[require(Mesh3d, Transform)]
+pub struct Prefab;
+
+#[derive(Component)]
+pub struct PrefabReady;

@@ -7,7 +7,7 @@ pub struct PrepareLevelEvent(pub String);
 pub struct PostProgresssEvent(pub String, pub u32, pub u32);
 
 #[derive(Event)]
-pub struct BlueprintReadyEvent(pub Entity);
+pub struct PrefabReadyEvent(pub Entity);
 
 #[derive(Event)]
 pub struct LevelLoadedEvent(pub Entity);

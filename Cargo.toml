@@ -1,6 +1,6 @@
 [package]
 name = "hammerspace"
-description = "A plugin for the loading and management of levels and scenes, and their physical properties"
+description = "A plugin for the loading and management of levels and objects, and their physical properties"
 repository = "https://github.com/KyWinston/hammerspace"
 version = "0.4.2"
 authors = ["Ky Winston<kwinston@proton.me>"]
@@ -45,7 +45,9 @@ default-features = true
 [dev-dependencies]
 bevy = { version = "0.15.3", default-features = false, features = [
     "file_watcher",
+    "dynamic_linking"
 ] }
+bevy-inspector-egui = "0.30.0"
 
 bevy_third_person_camera = "0.2.0"
 
