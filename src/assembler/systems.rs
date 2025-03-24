@@ -1,4 +1,8 @@
-use bevy::{gltf::GltfMesh, prelude::*, scene::SceneInstanceReady};
+use bevy::{
+    gltf::{GltfMesh, GltfNode},
+    prelude::*,
+    scene::SceneInstanceReady,
+};
 
 use super::{
     components::{Level, Prefab, PrefabReady},
@@ -15,33 +19,30 @@ pub(crate) fn setup_world(
         let gltf =
             asset_server.load(GltfAssetLabel::Scene(0).from_asset(format!("levels/{}.gltf", ev.0)));
         commands.insert_resource(GameWorld(gltf));
-        let library = asset_server.load(GltfAssetLabel::Scene(0).from_asset("library.gltf"));
+        let library = asset_server.load("library.gltf");
         commands.insert_resource(Library::new(library));
     }
 }
 
-pub(crate) fn load_level(
-    mut commands: Commands,
-    game_world: Res<GameWorld>,
-    library: Res<Library>,
-    gltf: ResMut<Assets<Gltf>>,
-) {
+pub(crate) fn load_level(mut commands: Commands, game_world: Res<GameWorld>) {
     commands.spawn((Level, SceneRoot(game_world.0.clone())));
-    println!("{:?}", gltf.get(library.handle.id()));
 }
 
-pub fn unpack_prefab(
-    trigger: Trigger<OnAdd, Prefab>,
-    prefabs: Query<(Entity, &Prefab)>,
+pub fn unpack_prefabs(
+    prefabs: Query<(Entity, &Prefab), Without<PrefabReady>>,
     mut commands: Commands,
-    gltf_mesh: ResMut<Assets<GltfMesh>>,
+    gltf_nodes: ResMut<Assets<GltfNode>>,
     meshes: ResMut<Assets<Gltf>>,
     mut library: ResMut<Library>,
+    asset_server: Res<AssetServer>,
 ) {
-    if let Ok(lib) = library.fetch(&prefabs.get(trigger.entity()).unwrap().1.0, meshes) {
-        if let Some(gltf_mesh) = gltf_mesh.get(lib.0.id()) {
-            let mesh = gltf_mesh.primitives[0].mesh.clone();
-            commands.entity(trigger.entity()).insert(Mesh3d(mesh));
+    let lib_meshes = meshes;
+    for (ent, prefab) in prefabs.iter() {
+        if let Ok(lib) = library.fetch(&prefab.0, &lib_meshes, &gltf_nodes) {
+            let chosen_node =
+                asset_server.load(GltfAssetLabel::Node(lib.0).from_asset("library.gltf"));
+            println!("{:?}", gltf_nodes.get(chosen_node.id()));
+            commands.entity(ent).insert((PrefabReady,));
         }
     }
 }
@@ -53,6 +54,7 @@ pub(crate) fn on_level_loaded(
 ) {
     for level in levels.iter() {
         if trigger.entity() == level {
+            println!("level is loaded");
             level_ev.send(LevelLoadedEvent(trigger.entity()));
         }
     }
