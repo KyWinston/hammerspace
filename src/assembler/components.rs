@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 
+use super::systems::unpack_prefab;
+
 #[derive(Component)]
 pub struct Level;
 
