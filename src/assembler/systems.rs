@@ -1,7 +1,4 @@
-// use crate::interact::components::Actor;
 use bevy::{gltf::GltfMesh, prelude::*, scene::SceneInstanceReady};
-
-use crate::interact::components::Actor;
 
 use super::{
     components::{Level, Prefab, PrefabReady},
@@ -23,8 +20,14 @@ pub(crate) fn setup_world(
     }
 }
 
-pub(crate) fn load_level(mut commands: Commands, game_world: Res<GameWorld>) {
+pub(crate) fn load_level(
+    mut commands: Commands,
+    game_world: Res<GameWorld>,
+    library: Res<Library>,
+    gltf: ResMut<Assets<Gltf>>,
+) {
     commands.spawn((Level, SceneRoot(game_world.0.clone())));
+    println!("{:?}", gltf.get(library.handle.id()));
 }
 
 pub fn unpack_prefab(
