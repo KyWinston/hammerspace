@@ -30,7 +30,7 @@ stl_io = { version = "0.7.0", optional = true }
 image = { version = "0.25.*" }
 blenvy = { git = "https://github.com/mdds-labs/Blenvy", branch="bevy-0.15" }
 rand = "0.8.5"
-iyes_progress = "0.13.1"
+iyes_progress = "0.13.*"
 bevy_copperfield = { version = "0.1.0", optional = true }
 nalgebra = "0.33.2"
 bitintr = "0.3.0"
