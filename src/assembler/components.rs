@@ -16,8 +16,8 @@ pub struct Sky {
 pub struct Character;
 
 #[derive(Component, Default)]
-#[require(Mesh3d, Transform)]
-pub struct Prefab;
+#[require(Transform)]
+pub struct Prefab(pub String);
 
 #[derive(Component)]
 pub struct PrefabReady;

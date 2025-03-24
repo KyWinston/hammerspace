@@ -1,8 +1,10 @@
 // use crate::interact::components::Actor;
-use bevy::{prelude::*, scene::SceneInstanceReady};
+use bevy::{gltf::GltfMesh, prelude::*, scene::SceneInstanceReady};
+
+use crate::interact::components::Actor;
 
 use super::{
-    components::{Level, PrefabReady},
+    components::{Level, Prefab, PrefabReady},
     events::{LevelLoadedEvent, PrefabReadyEvent, PrepareLevelEvent},
     resources::{GameWorld, Library},
 };
@@ -16,8 +18,8 @@ pub(crate) fn setup_world(
         let gltf =
             asset_server.load(GltfAssetLabel::Scene(0).from_asset(format!("levels/{}.gltf", ev.0)));
         commands.insert_resource(GameWorld(gltf));
-        // let library = asset_server.load(GltfAssetLabel::Scene(0).from_asset("library.gltf"));
-        // commands.insert_resource(Library::new(library));
+        let library = asset_server.load(GltfAssetLabel::Scene(0).from_asset("library.gltf"));
+        commands.insert_resource(Library::new(library));
     }
 }
 
@@ -25,22 +27,21 @@ pub(crate) fn load_level(mut commands: Commands, game_world: Res<GameWorld>) {
     commands.spawn((Level, SceneRoot(game_world.0.clone())));
 }
 
-// pub fn spawn_actor<'a>(
-//     commands: &'a mut Commands,
-//     mut scenes: ResMut<Assets<Scene>>,
-//     mut gltf: ResMut<Assets<Gltf>>,
-//     mut meshes:
-//     mut library: ResMut<Library>,
-//     name: String,
-//     location: Transform,
-// ) -> Result<EntityCommands<'a>, String> {
-//     if let Some(actor) = gltf.get(library.0.id()) {
-//         let mesh = scenes.get(actor.scenes[0].id());
-//         Ok(commands.spawn((Prefab, Actor, Name::from(name), location)))
-//     } else {
-//         Err("actor could not be found".to_string())
-//     }
-// }
+pub fn unpack_prefab(
+    trigger: Trigger<OnAdd, Prefab>,
+    prefabs: Query<(Entity, &Prefab)>,
+    mut commands: Commands,
+    gltf_mesh: ResMut<Assets<GltfMesh>>,
+    meshes: ResMut<Assets<Gltf>>,
+    mut library: ResMut<Library>,
+) {
+    if let Ok(lib) = library.fetch(&prefabs.get(trigger.entity()).unwrap().1.0, meshes) {
+        if let Some(gltf_mesh) = gltf_mesh.get(lib.0.id()) {
+            let mesh = gltf_mesh.primitives[0].mesh.clone();
+            commands.entity(trigger.entity()).insert(Mesh3d(mesh));
+        }
+    }
+}
 
 pub(crate) fn on_level_loaded(
     trigger: Trigger<OnAdd, SceneInstanceReady>,
