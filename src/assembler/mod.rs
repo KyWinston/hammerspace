@@ -40,6 +40,7 @@ impl Plugin for LoaderPlugin {
                 (
                     setup_blueprints.run_if(on_event::<PrepareLevelEvent>),
                     init_resources.run_if(resource_added::<SessionAssets>),
+                    #[cfg(feature="load_progress")]
                     check_assets_ready
                         .run_if(resource_exists::<ImageAssetsLoading>)
                         .run_if(in_state(AssetLoadState::Loading)),

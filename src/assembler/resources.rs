@@ -1,6 +1,7 @@
 use super::{events::PostProgresssEvent, AssetLoadState};
 use bevy::{asset::Handle, gltf::Gltf, prelude::*, utils::HashMap};
 use blenvy::{BlueprintInstanceReady, GameWorldTag};
+#[cfg(feature="load_progress")]
 use iyes_progress::ProgressEntry;
 
 #[derive(Resource)]
@@ -100,6 +101,7 @@ pub(crate) fn init_resources(
     commands.insert_resource(MeshAssetsLoading(loading_meshes.clone()));
 }
 
+#[cfg(feature="load_progress")]
 pub(crate) fn check_assets_ready(
     world: Query<(&GameWorldTag, &BlueprintInstanceReady)>,
     progress: ProgressEntry<AssetLoadState>,
@@ -111,6 +113,7 @@ pub(crate) fn check_assets_ready(
 ) {
     if world.get_single().is_ok() {
         info!("checking assets");
+        
         if !*initted {
             progress.set_total(
                 image_assets_loading.0.len() as u32 + mesh_assets_loading.0.len() as u32,
