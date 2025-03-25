@@ -2,12 +2,13 @@ use bevy::prelude::*;
 use components::Sky;
 use events::{BlueprintReadyEvent, LevelLoadedEvent, PostProgresssEvent, PrepareLevelEvent};
 
-#[cfg(feature="load_progress")]
+#[cfg(feature = "load_progress")]
 use iyes_progress::ProgressPlugin;
 
+#[cfg(feature = "load_progress")]
+use resources::check_assets_ready;
 use resources::{
-    ImageAssets, ImageAssetsLoading, MeshAssets, PreparedScenes, SessionAssets, check_assets_ready,
-    init_resources,
+    ImageAssets, ImageAssetsLoading, MeshAssets, PreparedScenes, SessionAssets, init_resources,
 };
 
 use systems::{on_blueprint_complete, on_level_loaded, setup_blueprints};
@@ -22,12 +23,12 @@ impl Plugin for LoaderPlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<AssetLoadState>()
             .enable_state_scoped_entities::<AssetLoadState>();
-            #[cfg(feature="load_progress")]
-            app.add_plugins(
-                ProgressPlugin::<AssetLoadState>::new()
-                    .with_state_transition(AssetLoadState::Loading, AssetLoadState::Loaded),
-            );
-            app.register_type::<Sky>()
+        #[cfg(feature = "load_progress")]
+        app.add_plugins(
+            ProgressPlugin::<AssetLoadState>::new()
+                .with_state_transition(AssetLoadState::Loading, AssetLoadState::Loaded),
+        );
+        app.register_type::<Sky>()
             .init_resource::<ImageAssets>()
             .init_resource::<MeshAssets>()
             .init_resource::<PreparedScenes>()
@@ -40,7 +41,7 @@ impl Plugin for LoaderPlugin {
                 (
                     setup_blueprints.run_if(on_event::<PrepareLevelEvent>),
                     init_resources.run_if(resource_added::<SessionAssets>),
-                    #[cfg(feature="load_progress")]
+                    #[cfg(feature = "load_progress")]
                     check_assets_ready
                         .run_if(resource_exists::<ImageAssetsLoading>)
                         .run_if(in_state(AssetLoadState::Loading)),
