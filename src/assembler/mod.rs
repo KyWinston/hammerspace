@@ -19,12 +19,13 @@ pub struct LoaderPlugin;
 impl Plugin for LoaderPlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<AssetLoadState>()
-            .enable_state_scoped_entities::<AssetLoadState>()
-            .add_plugins(
+            .enable_state_scoped_entities::<AssetLoadState>();
+            #[cfg(feature="load_progress")]
+            app.add_plugins(
                 ProgressPlugin::<AssetLoadState>::new()
                     .with_state_transition(AssetLoadState::Loading, AssetLoadState::Loaded),
-            )
-            .register_type::<Sky>()
+            );
+            app.register_type::<Sky>()
             .init_resource::<ImageAssets>()
             .init_resource::<MeshAssets>()
             .init_resource::<PreparedScenes>()
