@@ -2,7 +2,9 @@ use bevy::prelude::*;
 use components::Sky;
 use events::{BlueprintReadyEvent, LevelLoadedEvent, PostProgresssEvent, PrepareLevelEvent};
 
+#[cfg(feature="load_progress")]
 use iyes_progress::ProgressPlugin;
+
 use resources::{
     ImageAssets, ImageAssetsLoading, MeshAssets, PreparedScenes, SessionAssets, check_assets_ready,
     init_resources,
