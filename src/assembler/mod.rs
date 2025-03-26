@@ -7,9 +7,7 @@ use iyes_progress::ProgressPlugin;
 
 #[cfg(feature = "load_progress")]
 use resources::check_assets_ready;
-use resources::{
-    ImageAssets, ImageAssetsLoading, MeshAssets, PreparedScenes, SessionAssets, init_resources,
-};
+use resources::{ImageAssets, MeshAssets, PreparedScenes, SessionAssets, init_resources};
 
 use systems::{on_blueprint_complete, on_level_loaded, setup_blueprints};
 

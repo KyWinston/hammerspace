@@ -3,12 +3,15 @@ use bevy::prelude::*;
 #[derive(Component)]
 pub struct LevelTerrain;
 
-#[derive(Component,Reflect)]
+#[derive(Component, Reflect)]
 #[reflect(Component)]
 pub struct Sky;
 
 #[derive(Component, Default)]
 pub struct Character;
 
-#[derive(Component, Default, Reflect)]
-pub struct MaterialMarker<M>(pub Handle<M>) where M:blenvy::Material;
+#[derive(Component)]
+pub struct BlueprintInstanceReady;
+
+#[derive(Component)]
+pub struct GameWorldTag;

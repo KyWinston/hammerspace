@@ -1,35 +1,39 @@
 use bevy::{pbr::CascadeShadowConfigBuilder, prelude::*};
-use blenvy::{BlueprintInfo, BlueprintInstanceReady, GameWorldTag, HideUntilReady, SpawnBlueprint};
 
 use crate::interact::components::Actor;
 
 use super::{
-    components::Sky,
+    components::{BlueprintInstanceReady, GameWorldTag, Sky},
     events::{BlueprintReadyEvent, LevelLoadedEvent, PrepareLevelEvent},
 };
 
-pub fn setup_blueprints(mut level_ev: EventReader<PrepareLevelEvent>, mut commands: Commands) {
+pub fn setup_blueprints(
+    mut level_ev: EventReader<PrepareLevelEvent>,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+) {
     for ev in level_ev.read() {
         commands.spawn((
-            BlueprintInfo::from_path(format!("levels/{}.glb", ev.0).as_str()),
-            SpawnBlueprint,
-            HideUntilReady,
+            SceneRoot(
+                asset_server
+                    .load(GltfAssetLabel::Scene(0).from_asset(format!("levels/{}.glb", ev.0))),
+            ),
             GameWorldTag,
         ));
     }
 }
 
-pub fn spawn_actor<'a>(
+pub fn spawn_blueprint<'a>(
     commands: &'a mut Commands,
     name: String,
     location: Transform,
+    asset_server: Res<AssetServer>,
 ) -> EntityCommands<'a> {
     commands.spawn((
-        SpawnBlueprint,
-        BlueprintInfo {
-            name: name.clone(),
-            path: format!("blueprints/{}.glb", name),
-        },
+        SceneRoot(
+            asset_server
+                .load(GltfAssetLabel::Scene(0).from_asset(format!("blueprints/{}.glb", name))),
+        ),
         Actor,
         Name::from(name),
         location,
@@ -43,11 +47,11 @@ pub(crate) fn on_level_loaded(
     levels: Query<Entity, With<GameWorldTag>>,
     sun_light: Single<Entity, With<DirectionalLight>>,
     sky: Single<Entity, With<Sky>>,
-    mut materials: ResMut<Assets<StandardMaterial>>
+    mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     for level in levels.iter() {
-        if trigger.entity() == level {
-            level_ev.send(LevelLoadedEvent(trigger.entity()));
+        if trigger.target() == level {
+            level_ev.write(LevelLoadedEvent(trigger.target()));
         }
     }
     let cascade_shadow_config = CascadeShadowConfigBuilder {
@@ -73,9 +77,9 @@ pub(crate) fn on_blueprint_complete(
     levels: Query<Entity, With<GameWorldTag>>,
 ) {
     for level in levels.iter() {
-        if trigger.entity() == level {
+        if trigger.target() == level {
             return;
         }
     }
-    ev.send(BlueprintReadyEvent(trigger.entity()));
+    ev.write(BlueprintReadyEvent(trigger.target()));
 }

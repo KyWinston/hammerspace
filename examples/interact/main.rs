@@ -60,6 +60,7 @@ fn main() {
             commands.insert_resource(AmbientLight {
                 brightness: 100.0,
                 color: WHITE.into(),
+                affects_lightmapped_meshes: true,
             });
         })
         .add_systems(
@@ -102,7 +103,7 @@ fn main() {
             |mut player_q: Query<(Entity, &Transform, &mut Agent)>,
              int_q: Query<(Entity, &Transform, &Interactable), Without<Agent>>,
              mut gizmos: Gizmos| {
-                if let Ok((_, t, mut agent)) = player_q.get_single_mut() {
+                if let Ok((_, t, mut agent)) = player_q.single_mut() {
                     let list = Actor::list_valid_interacts(t.translation, 30.0, int_q, true);
                     let mut focus_ent = list[0].1.translation;
                     if agent.focused.is_some() && list.len() > 0 {
