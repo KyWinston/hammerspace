@@ -136,7 +136,7 @@ pub(crate) fn check_assets_ready(
             }
         }
         info!("checking meshes");
-
+    }}
 //         for mesh_and_scene in &mesh_assets_loading.0 {
 //             match server.get_load_state(&mesh_and_scene.clone()).unwrap() {
 //                 bevy::asset::LoadState::Failed(err) => {
