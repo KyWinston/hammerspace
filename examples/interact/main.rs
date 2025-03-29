@@ -5,13 +5,10 @@ use bevy::{
     prelude::*,
 };
 
-use bevy_third_person_camera::{
-    ThirdPersonCamera, ThirdPersonCameraPlugin, ThirdPersonCameraTarget, Zoom,
-};
 use hammerspace::{
+    HammerspacePlugin,
     interact::components::{Actor, Agent, Interactable},
     resources::HammerspaceConfig,
-    HammerspacePlugin,
 };
 
 fn main() {
@@ -29,20 +26,11 @@ fn main() {
                 })
                 .build(),
         )
-        .add_plugins((
-            HammerspacePlugin {
-                config: HammerspaceConfig::new("levels".to_string()),
-            },
-            ThirdPersonCameraPlugin,
-        ))
+        .add_plugins((HammerspacePlugin {
+            config: HammerspaceConfig::new("levels".to_string()),
+        },))
         .add_systems(Startup, |mut commands: Commands| {
-            commands.spawn((
-                Camera3d::default(),
-                ThirdPersonCamera {
-                    zoom: Zoom::new(15.0, 60.0),
-                    ..default()
-                },
-            ));
+            commands.spawn(Camera3d::default());
 
             commands.spawn((
                 DirectionalLight {
@@ -71,7 +59,6 @@ fn main() {
                 commands.spawn((
                     Mesh3d(meshes.add(Cuboid::from_length(2.0))),
                     MeshMaterial3d(mats.add(StandardMaterial::default())),
-                    ThirdPersonCameraTarget,
                     Actor,
                     Agent::new(),
                     Transform::from_xyz(0.0, 5.0, 0.0),
