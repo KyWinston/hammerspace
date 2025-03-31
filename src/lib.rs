@@ -1,8 +1,8 @@
 use crate::location_marker::LocationMarkerPlugin;
 use assembler::LoaderPlugin;
 use bevy::prelude::*;
-use blenvy::BlenvyPlugin;
 
+use bevy_skein::SkeinPlugin;
 use interact::InteractPlugin;
 #[cfg(feature = "pathfind")]
 use pathfind::{events::PathEvent, PathFindPlugin};
@@ -32,7 +32,7 @@ impl Plugin for HammerspacePlugin {
             LoaderPlugin,
             LocationMarkerPlugin,
             InteractPlugin,
-            BlenvyPlugin::default(),
+            SkeinPlugin::default(),
             #[cfg(feature = "pathfind")]
             PathFindPlugin,
             #[cfg(feature = "proc_terrain")]

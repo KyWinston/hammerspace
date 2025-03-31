@@ -1,81 +1,48 @@
-use bevy::{pbr::CascadeShadowConfigBuilder, prelude::*};
-use blenvy::{BlueprintInfo, BlueprintInstanceReady, GameWorldTag, HideUntilReady, SpawnBlueprint};
-
-use crate::interact::components::Actor;
+use bevy::{prelude::*, scene::SceneInstance};
 
 use super::{
-    components::Sky,
-    events::{BlueprintReadyEvent, LevelLoadedEvent, PrepareLevelEvent},
+    components::{Level, Prefab},
+    events::{LevelLoadedEvent, PrefabReadyEvent, PrepareLevelEvent},
+    resources::{GameWorld, Library},
 };
 
-pub fn setup_blueprints(mut level_ev: EventReader<PrepareLevelEvent>, mut commands: Commands) {
+pub(crate) fn setup_world(
+    mut level_ev: EventReader<PrepareLevelEvent>,
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+) {
     for ev in level_ev.read() {
-        commands.spawn((
-            BlueprintInfo::from_path(format!("levels/{}.glb", ev.0).as_str()),
-            SpawnBlueprint,
-            HideUntilReady,
-            GameWorldTag,
-        ));
+        let gltf =
+            asset_server.load(GltfAssetLabel::Scene(0).from_asset(format!("levels/{}.gltf", ev.0)));
+        commands.insert_resource(GameWorld(gltf));
+        commands.insert_resource(Library::new());
     }
 }
 
-pub fn spawn_actor<'a>(
-    commands: &'a mut Commands,
-    name: String,
-    location: Transform,
-) -> EntityCommands<'a> {
-    commands.spawn((
-        SpawnBlueprint,
-        BlueprintInfo {
-            name: name.clone(),
-            path: format!("blueprints/{}.glb", name),
-        },
-        Actor,
-        Name::from(name),
-        location,
-    ))
+pub(crate) fn load_level(mut commands: Commands, game_world: Res<GameWorld>) {
+    commands.spawn((Level, SceneRoot(game_world.0.clone())));
 }
 
 pub(crate) fn on_level_loaded(
-    trigger: Trigger<OnAdd, BlueprintInstanceReady>,
-    mut commands: Commands,
+    trigger: Trigger<OnAdd, SceneInstance>,
     mut level_ev: EventWriter<LevelLoadedEvent>,
-    levels: Query<Entity, With<GameWorldTag>>,
-    sun_light: Single<Entity, With<DirectionalLight>>,
-    sky: Single<Entity, With<Sky>>,
-    mut materials: ResMut<Assets<StandardMaterial>>
+    levels: Query<Entity, With<Level>>,
 ) {
     for level in levels.iter() {
         if trigger.entity() == level {
             level_ev.send(LevelLoadedEvent(trigger.entity()));
         }
     }
-    let cascade_shadow_config = CascadeShadowConfigBuilder {
-        first_cascade_far_bound: 0.3,
-        maximum_distance: 3.0,
-        ..default()
-    }
-    .build();
-    commands.entity(*sun_light).insert(cascade_shadow_config);
-    commands
-        .entity(*sky)
-        .insert(MeshMaterial3d(materials.add(StandardMaterial {
-            base_color: Srgba::hex("888888").unwrap().into(),
-            unlit: true,
-            cull_mode: None,
-            ..default()
-        })));
 }
 
-pub(crate) fn on_blueprint_complete(
-    trigger: Trigger<OnAdd, BlueprintInstanceReady>,
-    mut ev: EventWriter<BlueprintReadyEvent>,
-    levels: Query<Entity, With<GameWorldTag>>,
+pub(crate) fn on_prefab_loaded(
+    trigger: Trigger<OnAdd, SceneInstance>,
+    mut ev: EventWriter<PrefabReadyEvent>,
+    prefabs: Query<Entity, With<Prefab>>,
 ) {
-    for level in levels.iter() {
-        if trigger.entity() == level {
-            return;
+    for prefab in prefabs.iter() {
+        if trigger.entity() == prefab {
+            ev.send(PrefabReadyEvent(prefab));
         }
     }
-    ev.send(BlueprintReadyEvent(trigger.entity()));
 }
