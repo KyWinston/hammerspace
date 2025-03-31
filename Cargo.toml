@@ -28,6 +28,7 @@ baby_shark = { version = "0.3.3", optional = true }
 stl_io = { version = "0.8.5", optional = true }
 image = { version = "0.25.*" }
 rand = "0.9.0"
+iyes_progress = "0.13.1"
 bevy_copperfield = { version = "0.2.2", optional = true }
 nalgebra = "0.33.2"
 bitintr = "0.3.0"
