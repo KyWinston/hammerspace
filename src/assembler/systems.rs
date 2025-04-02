@@ -1,8 +1,8 @@
 use bevy::{prelude::*, scene::SceneInstance};
 
 use super::{
-    components::{Level, Prefab},
-    events::{LevelLoadedEvent, PrefabReadyEvent, PrepareLevelEvent},
+    components::Level,
+    events::{LevelLoadedEvent, PrepareLevelEvent},
     resources::{GameWorld, Library},
 };
 
@@ -31,18 +31,6 @@ pub(crate) fn on_level_loaded(
     for level in levels.iter() {
         if trigger.entity() == level {
             level_ev.send(LevelLoadedEvent(trigger.entity()));
-        }
-    }
-}
-
-pub(crate) fn on_prefab_loaded(
-    trigger: Trigger<OnAdd, SceneInstance>,
-    mut ev: EventWriter<PrefabReadyEvent>,
-    prefabs: Query<Entity, With<Prefab>>,
-) {
-    for prefab in prefabs.iter() {
-        if trigger.entity() == prefab {
-            ev.send(PrefabReadyEvent(prefab));
         }
     }
 }

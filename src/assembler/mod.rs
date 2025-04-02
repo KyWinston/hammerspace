@@ -6,7 +6,7 @@ use events::{LevelLoadedEvent, PostProgresssEvent, PrefabReadyEvent, PrepareLeve
 use iyes_progress::ProgressPlugin;
 
 use resources::GameWorld;
-use systems::{load_level, on_level_loaded, on_prefab_loaded, setup_world};
+use systems::{load_level, on_level_loaded, setup_world};
 
 pub mod components;
 pub mod events;
@@ -34,8 +34,7 @@ impl Plugin for LoaderPlugin {
                     load_level.run_if(resource_added::<GameWorld>),
                 ),
             )
-            .add_observer(on_level_loaded)
-            .add_observer(on_prefab_loaded);
+            .add_observer(on_level_loaded);
     }
 }
 #[derive(PartialEq, Eq, Debug, Hash, Clone, Copy, Default, States)]
