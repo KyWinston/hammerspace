@@ -34,7 +34,7 @@ nalgebra = "0.33.2"
 bitintr = "0.3.0"
 palette = "0.7.6"
 enterpolation = "0.2.1"
-bevy_skein = "0.1.2"
+bevy_skein = { git = "https://github.com/rust-adventure/skein", branch = "main" }
 
 [target.'cfg(target_os = "linux")'.dev-dependencies.bevy]
 version = "0.16.0-rc.3"
