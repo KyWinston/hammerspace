@@ -1,6 +1,6 @@
 [package]
 name = "hammerspace"
-description = "A plugin for the loading and management of levels and scenes, and their physical properties"
+description = "A plugin for the loading and management of levels and objects, and their physical properties"
 repository = "https://github.com/KyWinston/hammerspace"
 version = "0.4.2"
 authors = ["Ky Winston<kwinston@proton.me>"]
@@ -11,7 +11,7 @@ keywords = ["bevy"]
 publish = true
 
 [dependencies]
-bevy = { version = "0.16.0-rc.2", default-features = false, features = [
+bevy = { version = "0.16.0-rc.3", default-features = false, features = [
     "bevy_asset",
     "bevy_scene",
     "bevy_state",
@@ -20,34 +20,36 @@ bevy = { version = "0.16.0-rc.2", default-features = false, features = [
 ] }
 serde = "1.0.195"
 cfg-if = "1.0.0"
-
-image = { version = "0.25.*" }
-# blenvy = { git = "https://github.com/mdds-labs/Blenvy", branch = "main" }
-bevy_skein = { git = "https://github.com/rust-adventure/skein", branch = "main" }
-iyes_progress = { version = "0.13.1", optional = true }
-bevy_copperfield = { version = "0.1.0", optional = true }
-vleue_navigator = { version = "0.10.2", optional = true }
+vleue_navigator = { version = "0.11.1", optional = true }
 clap = { version = "4.5.*", optional = true }
 bitflags = { version = "2.5.0", optional = true }
-sickle_ui = { version = "0.2.1", optional = true }
+sickle_ui = { version = "0.4.0", optional = true }
 baby_shark = { version = "0.3.3", optional = true }
-stl_io = { version = "0.7.0", optional = true }
-# nalgebra = "0.33.2"
-# bitintr = "0.3.0"
-# palette = "0.7.6"
-# rand = "0.8.5"
+stl_io = { version = "0.8.5", optional = true }
+image = { version = "0.25.*" }
+rand = "0.9.0"
+iyes_progress = { version = "0.13.1", optional = true }
+bevy_copperfield = { version = "0.2.2", optional = true }
+nalgebra = "0.33.2"
+bitintr = "0.3.0"
+palette = "0.7.6"
+enterpolation = "0.2.1"
+bevy_skein = { git = "https://github.com/rust-adventure/skein", branch = "main" }
 
 [target.'cfg(target_os = "linux")'.dev-dependencies.bevy]
-version = "0.16.0-rc.2"
+version = "0.16.0-rc.3"
 features = ["x11", "wayland", "bevy_winit"]
 default-features = true
 
 [dev-dependencies]
-bevy = { version = "0.16.0-rc.2", default-features = false, features = [
+bevy = { version = "0.16.0-rc.3", default-features = false, features = [
     "file_watcher",
     "bevy_render",
     "trace",
+    "dynamic_linking",
 ] }
+
+bevy-inspector-egui = "0.30.0"
 
 bevy_third_person_camera = "0.2.0"
 
