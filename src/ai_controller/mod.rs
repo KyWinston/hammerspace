@@ -1,11 +1,9 @@
 use bevy::prelude::*;
 
-
 pub mod components;
 
-pub struct AiControllerPlugin;
+pub(crate) struct AiControllerPlugin;
 
 impl Plugin for AiControllerPlugin {
-    fn build(&self, _app: &mut App) {
-    }
+    fn build(&self, _app: &mut App) {}
 }

@@ -12,7 +12,7 @@ pub mod components;
 pub mod events;
 pub mod resources;
 pub mod systems;
-pub struct LoaderPlugin;
+pub(crate) struct LoaderPlugin;
 
 impl Plugin for LoaderPlugin {
     fn build(&self, app: &mut App) {

@@ -3,7 +3,7 @@ use bevy::prelude::*;
 
 use super::components::Interactable;
 
-pub fn check_in_view(
+pub(crate) fn check_in_view(
     cam_q: Query<(&GlobalTransform, &Camera)>,
     mut int_q: Query<(&Transform, &mut Interactable)>,
 ) {

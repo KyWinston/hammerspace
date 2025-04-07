@@ -13,7 +13,7 @@ use terrain::TerrainPlugin;
 pub mod ai_controller;
 pub mod assembler;
 pub mod interact;
-pub mod location_marker;
+// pub mod location_marker;
 pub mod resources;
 
 #[cfg(feature = "pathfind")]
@@ -30,7 +30,7 @@ impl Plugin for HammerspacePlugin {
     fn build(&self, app: &mut App) {
         app.add_plugins((
             LoaderPlugin,
-            LocationMarkerPlugin,
+            // LocationMarkerPlugin,
             InteractPlugin,
             SkeinPlugin::default(),
             #[cfg(feature = "pathfind")]

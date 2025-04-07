@@ -2,9 +2,9 @@ use systems::check_in_view;
 use bevy::prelude::*;
 
 pub mod components;
-pub mod systems;
+mod systems;
 
-pub struct InteractPlugin;
+pub(crate) struct InteractPlugin;
 
 impl Plugin for InteractPlugin {
     fn build(&self, app: &mut App) {
