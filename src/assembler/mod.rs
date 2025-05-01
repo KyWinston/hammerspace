@@ -2,7 +2,6 @@ use bevy::prelude::*;
 use components::Sky;
 use events::{LevelLoadedEvent, PostProgresssEvent, PrefabReadyEvent, PrepareLevelEvent};
 
-#[cfg(feature = "load_progress")]
 use iyes_progress::ProgressPlugin;
 
 use resources::GameWorld;
