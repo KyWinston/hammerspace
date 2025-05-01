@@ -28,7 +28,7 @@ baby_shark = { version = "0.3.3", optional = true }
 stl_io = { version = "0.8.5", optional = true }
 image = { version = "0.25.*" }
 rand = "0.9.0"
-iyes_progress = { version = "0.13.1", optional = true }
+iyes_progress = "0.13.1"
 bevy_copperfield = { version = "0.2.2", optional = true }
 nalgebra = "0.33.2"
 palette = "0.7.6"
@@ -56,7 +56,6 @@ default = []
 pathfind = ["dep:vleue_navigator"]
 proc_terrain = ["dep:baby_shark", "dep:bevy_copperfield", "dep:stl_io"]
 debug = []
-load_progress = ["dep:iyes_progress"]
 
 # Enable a small amount of optimization in debug mode
 [profile.dev]

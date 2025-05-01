@@ -18,7 +18,6 @@ impl Plugin for LoaderPlugin {
     fn build(&self, app: &mut App) {
         app.init_state::<AssetLoadState>()
             .enable_state_scoped_entities::<AssetLoadState>();
-            #[cfg(feature = "load_progress")]
             app.add_plugins(
                 ProgressPlugin::<AssetLoadState>::new()
                     .with_state_transition(AssetLoadState::Loading, AssetLoadState::Loaded),
