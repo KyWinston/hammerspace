@@ -1,4 +1,3 @@
-use crate::location_marker::LocationMarkerPlugin;
 use assembler::LoaderPlugin;
 use bevy::prelude::*;
 
