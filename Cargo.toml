@@ -31,10 +31,10 @@ rand = "0.9.0"
 iyes_progress = { version = "0.13.1", optional = true }
 bevy_copperfield = { version = "0.2.2", optional = true }
 nalgebra = "0.33.2"
-bitintr = "0.3.0"
 palette = "0.7.6"
 enterpolation = "0.2.1"
-bevy_skein = { git = "https://github.com/rust-adventure/skein", branch = "main" }
+bevy_skein="0.2.0"
+# bevy_skein = { git = "https://github.com/rust-adventure/skein", branch = "main" }
 
 [target.'cfg(target_os = "linux")'.dev-dependencies.bevy]
 version = "0.16.0"
@@ -48,10 +48,8 @@ bevy = { version = "0.16.0", default-features = false, features = [
     "trace",
     "dynamic_linking",
 ] }
-
 bevy-inspector-egui = "0.30.0"
-
-bevy_third_person_camera = "0.2.0"
+bevy_third_person_camera = "0.2.1"
 
 [features]
 default = []
