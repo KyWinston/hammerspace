@@ -11,7 +11,7 @@ keywords = ["bevy"]
 publish = true
 
 [dependencies]
-bevy = { version = "0.16.0", default-features = false, features = [
+bevy = { version = "0.16.1", default-features = false, features = [
     "bevy_asset",
     "bevy_scene",
     "bevy_state",
@@ -53,6 +53,7 @@ bevy_third_person_camera = "0.2.1"
 [features]
 default = []
 pathfind = ["dep:vleue_navigator"]
+tiler =[]
 proc_terrain = ["dep:baby_shark", "dep:bevy_copperfield", "dep:stl_io"]
 debug = []
 

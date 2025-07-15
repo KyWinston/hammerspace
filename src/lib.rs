@@ -21,6 +21,9 @@ pub mod pathfind;
 #[cfg(feature = "proc_terrain")]
 pub mod terrain;
 
+#[cfg(feature = "tiler")]
+pub mod dungeon_tiler;
+
 pub struct HammerspacePlugin {
     pub config: HammerspaceConfig,
 }
@@ -36,6 +39,8 @@ impl Plugin for HammerspacePlugin {
             PathFindPlugin,
             #[cfg(feature = "proc_terrain")]
             TerrainPlugin,
+            #[cfg(feature = "tiler")]
+            TilerPlugin
         ));
         #[cfg(feature = "pathfind")]
         app.add_event::<PathEvent>();

@@ -4,6 +4,10 @@ use bevy::{asset::Handle, gltf::GltfNode, prelude::*};
 pub struct GameWorld(pub Handle<Scene>);
 
 #[derive(Resource)]
+pub struct Dungeon(pub String);
+
+
+#[derive(Resource)]
 pub struct Library {
     pub meshes: Vec<Handle<GltfNode>>,
     pub textures: Vec<Handle<Image>>,

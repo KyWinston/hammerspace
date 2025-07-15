@@ -1,5 +1,7 @@
 use bevy::{prelude::*, scene::SceneInstance};
 
+use crate::assembler::{events::LevelType, resources::Dungeon};
+
 use super::{
     components::Level,
     events::{LevelLoadedEvent, PrepareLevelEvent},
@@ -12,10 +14,14 @@ pub(crate) fn setup_world(
     asset_server: Res<AssetServer>,
 ) {
     for ev in level_ev.read() {
-        let gltf =
-            asset_server.load(GltfAssetLabel::Scene(0).from_asset(format!("levels/{}.gltf", ev.0)));
-        commands.insert_resource(GameWorld(gltf));
-        commands.insert_resource(Library::new());
+        if ev.1 == LevelType::Premade {
+            let gltf = asset_server
+                .load(GltfAssetLabel::Scene(0).from_asset(format!("levels/{}.gltf", ev.0)));
+            commands.insert_resource(GameWorld(gltf));
+            commands.insert_resource(Library::new());
+        } else if ev.1 == LevelType::DungeonTile {
+            commands.insert_resource(Dungeon(ev.0))
+        }
     }
 }
 
