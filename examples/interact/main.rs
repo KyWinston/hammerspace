@@ -1,14 +1,13 @@
 use bevy::{
     color::palettes::{css::WHITE, tailwind::BLUE_100},
     image::{ImageAddressMode, ImageSamplerDescriptor},
-    pbr::CascadeShadowConfigBuilder,
     prelude::*,
 };
 
 use hammerspace::{
-    HammerspacePlugin,
     interact::components::{Actor, Agent, Interactable},
     resources::HammerspaceConfig,
+    HammerspacePlugin,
 };
 
 fn main() {
@@ -35,11 +34,6 @@ fn main() {
             commands.spawn((
                 DirectionalLight {
                     illuminance: light_consts::lux::OVERCAST_DAY,
-                    ..default()
-                },
-                CascadeShadowConfigBuilder {
-                    first_cascade_far_bound: 4.0,
-                    maximum_distance: 10.0,
                     ..default()
                 }
                 .build(),
