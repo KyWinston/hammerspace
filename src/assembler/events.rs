@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 
+#[derive(PartialEq)]
 pub enum LevelType {
     Premade,
     DungeonTile,
