@@ -20,7 +20,7 @@ pub(crate) fn setup_world(
             commands.insert_resource(GameWorld(gltf));
             commands.insert_resource(Library::new());
         } else if ev.1 == LevelType::DungeonTile {
-            commands.insert_resource(Dungeon(ev.0))
+            commands.insert_resource(Dungeon(ev.0.clone()))
         }
     }
 }
